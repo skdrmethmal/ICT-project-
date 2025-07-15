@@ -1,142 +1,101 @@
-import { forwardRef, useState } from "react";
+import { Button } from "./button";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router";
-import { Menu as MenuIcon, X, User as UserIcon } from "lucide-react";
-import { useUser, SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
-import { Button } from "@/components/ui/button"; // shadcn button
-
-export const Navbar = () => {
+import { useSelector } from "react-redux";
+import { useUser } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  // const userSlice = useSelector((state) => state.user);
   const { user } = useUser();
-
   return (
-    <header className="flex justify-center w-full  top-0 z-50 px-4 bg-white">
-      <div className="shadow-lg w-full max-w-[1600px] rounded-b-2xl">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Left - Logo */}
-            <div className="flex items-center">
-              <Link to="/" className="text-2xl font-bold">
-                <span>Hotelza</span>
-                <span className="animate-pulse text-blue-800">AI</span>
-              </Link>
-            </div>
-
-            {/* Center - Navigation Links */}
-            <nav className="hidden md:flex items-center justify-center flex-1">
-              <ul className="flex space-x-8">
-                <li>
-                  <Link
-                    to="/"
-                    className="font-medium text-gray-700 hover:text-black transition-colors relative group"
-                  >
-                    Home
-                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black transform scale-x-0 transition-transform group-hover:scale-x-100"></span>
-                  </Link>
-                </li>
-                {user?.publicMetadata?.role === "admin" && (
-                  <li>
-                    <Link
-                      to="/create-hotel"
-                      className="font-medium text-gray-700 hover:text-black transition-colors relative group"
-                    >
-                      Admin Dashboard
-                      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black transform scale-x-0 transition-transform group-hover:scale-x-100"></span>
-                    </Link>
-                  </li>
-                )}
-              </ul>
-            </nav>
-
-            {/* Right - Auth Buttons & Icons */}
-            <div className="flex items-center space-x-4">
-              <SignedOut>
-                <Link to="/sign-in">
-                  <Button
-                    variant="outline"
-                    className="hidden md:flex rounded-full px-4"
-                  >
-                    Login
-                  </Button>
-                </Link>
-                <Link to="/sign-up">
-                  <Button
-                    variant="outline"
-                    className="hidden md:flex rounded-full px-4"
-                  >
-                    Signup
-                  </Button>
-                </Link>
-              </SignedOut>
-
-              <SignedIn>
-                <div className="hidden md:flex items-center gap-2">
-                  <UserButton afterSignOutUrl="/" />
-                  <Link to="/account">
-                    <Button className="bg-black text-white hover:bg-gray-800 rounded-full px-4 flex items-center gap-2">
-                      <UserIcon size={18} />
-                      <span>Account</span>
-                    </Button>
-                  </Link>
-                </div>
-              </SignedIn>
-
-              {/* Mobile Menu Icon */}
-              <button
-                className="md:hidden p-2 rounded-full hover:bg-gray-100 transition-colors"
-                onClick={() => setIsOpen(!isOpen)}
-              >
-                {isOpen ? (
-                  <X size={24} />
-                ) : (
-                  <MenuIcon size={24} className="text-gray-600" />
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu Dropdown */}
-        {isOpen && (
-          <div className="md:hidden bg-white border-t p-4 space-y-4">
-            <Link
-              to="/"
-              className="block text-gray-700 font-medium hover:text-black"
-            >
+    <>
+      <nav className=" flex items-center justify-between bg-black text-white h-[70px] px-8">
+        <div className="flex items-center gap-4 ">
+          <p className="text-[24px] font-semibold cursor-pointer">Horizone</p>
+          <div className="hidden md:flex">
+            <Link to="/" className="hover:text-gray-500 px-5">
               Home
             </Link>
             {user?.publicMetadata?.role === "admin" && (
-              <Link
-                to="/admin-dashboard"
-                className="block text-gray-700 font-medium hover:text-black"
-              >
-                Admin
+              <Link to="/create-hotel" className="hover:text-gray-500 px-5">
+                Create Hotel
               </Link>
             )}
-            <SignedOut>
-              <Link to="/sign-in">
-                <Button variant="outline" className="w-full">
-                  Login
-                </Button>
+          </div>
+        </div>
+
+        {/* desktop menu */}
+        <div className="hidden md:flex gap-3 items-center">
+          <SignedOut>
+            <Link to="/sign-in">
+              <Button variant="default">Login</Button>
+            </Link>
+            <Link to="/sign-up">
+              <Button variant="default">Signup</Button>
+            </Link>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+            <Link to="/account">
+              <Button variant="default">My Account</Button>
+            </Link>
+          </SignedIn>
+
+          {/* <div>{userSlice.user.name}</div> */}
+        </div>
+
+        {/* hamburger icon */}
+        <div className="md:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}
+          >
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </Button>
+        </div>
+
+        {isOpen && (
+          <div className=" z-100 md:hidden absolute top-[70px] left-0 w-full bg-black backdrop-blur-sm flex flex-col justify-center items-center ">
+            <div className="flex flex-col gap-4 p-4 w-full z-index-10">
+              <Link
+                to="/"
+                className="text-white text-center text-[14px] font-semibold hover:text-gray-500"
+              >
+                Home
               </Link>
-              <Link to="/sign-up">
-                <Button variant="outline" className="w-full">
-                  Signup
-                </Button>
+              <Link
+                to="/create-hotel"
+                className="text-white text-center text-[14px] font-semibold hover:text-gray-500"
+              >
+                Create Hotel
               </Link>
-            </SignedOut>
-            <SignedIn>
-              <div className="flex items-center gap-2">
-                <UserButton />
-                <Link to="/account">
-                  <Button variant="default" className="w-full">
-                    My Account
-                  </Button>
+              <SignedOut>
+                <Link to="/sign-in">
+                  <Button variant="meta_custom">Login</Button>
                 </Link>
-              </div>
-            </SignedIn>
+                <Link to="/sign-up">
+                  <Button variant="meta_custom">Sign up</Button>
+                </Link>
+              </SignedOut>
+              <SignedIn>
+                <div className="flex flex-row gap-2 justify-center text-white text-center text-[14px] font-semibold hover:text-gray-500">
+                  <UserButton />
+                  <Link to="/account">
+                    <Button variant="default">My Account</Button>
+                  </Link>
+                </div>
+              </SignedIn>
+            </div>
           </div>
         )}
-      </div>
-    </header>
+      </nav>
+    </>
   );
 };
+
+export { Navbar };

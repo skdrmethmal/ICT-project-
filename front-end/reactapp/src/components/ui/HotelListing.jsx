@@ -9,7 +9,30 @@ import { useDispatch } from "react-redux";
 import { useGetHotelsQuery } from "@/lib/api";
 
 const HotelListing = () => {
+  // const [hotels, setHotels] = useState([]);
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [isError, setIsError] = useState(false);
+  // const [error, setError] = useState("");
+  // // Fetching hotels data from the API when the component mounts
+  // useEffect(() => {
+  //   getHotels()
+  //     .then((hotels) => {
+  //       setHotels(hotels);
+  //     })
+  //     .catch((error) => {
+  //       setIsError(true);
+  //       setError(error.message);
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // }, []);
+
   const { data: hotels, isLoading, isError, error } = useGetHotelsQuery();
+
+  // const userSlice = useSelector((state) => state.user);
+
+  // const dispatch = useDispatch();
 
   const locations = ["ALL", "France", "Australia", "Japan", "Italy"];
 
@@ -84,7 +107,7 @@ const HotelListing = () => {
     );
   }
   return (
-    <div className="w-[90vw] sm:w-[95vw] max-w-[1500px] mx-auto   my-5">
+    <div className=" w-[90vw] sm:w-[95vw] max-w-[1800px] mx-auto   my-5">
       <h1 className="text-[32px] font-bold mb-[8px] ">
         Top Trending Hotels Worldwide
       </h1>
@@ -92,7 +115,14 @@ const HotelListing = () => {
       <p className="text-gray-700 mb-5">
         Discover the most trending hotels for an unforgettable experience
       </p>
-
+      {/* <div>Hello,{userSlice.user.name} </div>
+      <Button
+        onClick={() => {
+          dispatch(setUser({ name: "Deshapriya" }));
+        }}
+      >
+        Click Me
+      </Button> */}
       <div className="flex gap-2 items-centers mb-4">
         {locations.map((location, Index) => (
           <LocationTab
