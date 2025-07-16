@@ -1,6 +1,6 @@
-Author : Methmal Deshapriya
 
-# AIDF Project
+
+ICT project
 
 This is a full-stack application developed for the **HotelsForStaycation**, including both frontend and backend components. The system enables AI powered hotel search based on the vibe/exeperience want, hotel bookings with authentication, Integrated payment gateways, hotel listings, and admin-level operations.
 
