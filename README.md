@@ -4,6 +4,15 @@ This is a full-stack application developed for the ** hotel booking system**, in
 
 ---
 
+# Group Members
+
+Methmal Deshapriya
+Anushka Sudeera
+Pasindu Prageesha
+K Niveka
+Salomi
+Rahul
+
 ## 🚀 Technologies Used
 
 ### 🔹 Frontend
