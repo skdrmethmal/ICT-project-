@@ -6,7 +6,7 @@ import { getHotels } from "@/lib/api/hotels.jsx";
 import { useSelector } from "react-redux";
 import { setUser } from "@/lib/features/userSlice";
 import { useDispatch } from "react-redux";
-import { useGetHotelsQuery } from "@/lib/api";
+import { useGetHotelsQuery, useGetHotelBySearchQuery } from "@/lib/api";
 
 const HotelListing = () => {
   // const [hotels, setHotels] = useState([]);
@@ -28,10 +28,17 @@ const HotelListing = () => {
   //     });
   // }, []);
 
-  const { data: hotels, isLoading, isError, error } = useGetHotelsQuery();
+  const searchValue = useSelector((state) => state.search.value);
+
+  // const { data: hotels, isLoading, isError } = useGetHotelsQuery();
+
+  const {
+    data: hotels,
+    isLoading,
+    isError,
+  } = useGetHotelBySearchQuery({ query: searchValue });
 
   // const userSlice = useSelector((state) => state.user);
-
   // const dispatch = useDispatch();
 
   const locations = ["ALL", "France", "Australia", "Japan", "Italy"];
@@ -46,7 +53,7 @@ const HotelListing = () => {
   const filteredHotels =
     selectedLocation === "ALL"
       ? hotels
-      : hotels.filter((hotel) => {
+      : hotels.filter(({ hotel }) => {
           return hotel.location
             .toLowerCase()
             .includes(selectedLocation.toLowerCase());
@@ -135,8 +142,8 @@ const HotelListing = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 ">
-        {filteredHotels.map((hotel) => (
-          <HotelCard key={hotel._id} hotel={hotel} />
+        {filteredHotels.map(({ hotel, confidence }) => (
+          <HotelCard key={hotel._id} hotel={hotel} confidence={confidence} />
         ))}
       </div>
     </div>

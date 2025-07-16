@@ -9,7 +9,9 @@ const initialState = {
 const userSlice = createSlice({
   name: "user",
   initialState,
+  //Instructions to change the state/slice
   reducers: {
+    //Actions
     setUser: (state, action) => {
       state.user = action.payload;
     },

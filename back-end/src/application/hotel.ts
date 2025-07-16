@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from "express";
 import NotFoundError from "../domain/errors/not-found-error";
 import ValidationError from "../domain/errors/validation-error";
 import { addHotelDTO } from "../domain/dtos/hotel";
+import { OpenAI } from "openai";
+import { createEmbedding } from "./embeddings";
 // const hotels = [
 //   {
 //     _id: "1",
@@ -182,7 +184,7 @@ export const addHotel = async (
     //   description: newHotel.description,
     // });
 
-    await Hotel.create({
+    const savedHotel = await Hotel.create({
       name: newHotel.data.name,
       location: newHotel.data.location,
       // rating: parseFloat(newHotel.data.rating),
@@ -191,6 +193,8 @@ export const addHotel = async (
       price: newHotel.data.price,
       description: newHotel.data.description,
     });
+
+    createEmbedding(savedHotel);
 
     res.status(201).json(newHotel);
     return;
@@ -253,4 +257,44 @@ export const updateHotel = async (
   } catch (error) {
     next(error);
   }
+};
+
+//Generate example hotels
+export const Generate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { messages } = req.body;
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: messages,
+      store: true,
+    });
+
+    res.status(200).json({
+      messages: [
+        ...messages,
+        { role: "assistant", content: completion.choices[0].message.content },
+      ],
+    });
+    return;
+  } catch (error) {
+    next(error);
+  }
+
+  // const messages = [
+  //   { role: "user", content: "Hello how are you" },
+  //   { role: "assistant", content: "Hello I'm good what about you" },
+  // ];
+  // const messages2 = [...messages];
+  // res.status(200).json({
+  //   message: messages2,
+  // });
 };

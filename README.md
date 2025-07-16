@@ -1,17 +1,10 @@
-# ICT Project
+Author : Methmal Deshapriya
 
-This is a full-stack application developed for the ** hotel booking system**, including both frontend and backend components. The system enables hotel bookings with authentication, hotel listings, and admin-level operations.
+# AIDF Project
+
+This is a full-stack application developed for the **HotelsForStaycation**, including both frontend and backend components. The system enables AI powered hotel search based on the vibe/exeperience want, hotel bookings with authentication, Integrated payment gateways, hotel listings, and admin-level operations.
 
 ---
-
-# Group Members
-
-Methmal Deshapriya
-Anushka Sudeera
-Pasindu Prageesha
-K Niveka
-Salomi
-Rahul
 
 ## 🚀 Technologies Used
 
@@ -29,8 +22,9 @@ Rahul
 - Express.js
 - TypeScript
 - MongoDB (Mongoose)
-- JWT Authentication
+- Clerk Authentication
 - Middleware (Auth, Error Handling)
+- OpenAI
 
 ---
 
@@ -42,6 +36,7 @@ Rahul
 - 🧭 Role-based Routing
 - ⚠️ Global Error Handling
 - 🔁 API Integration (RESTful)
+- 🛜 AI Powered search for hotels
 
 ---
 
@@ -49,13 +44,16 @@ Rahul
 
 ### 🖥️ Backend
 
-````bash
+```bash
 cd aidf-back-end
 npm install
 npm run dev
+```
+
+### 📺 Frontend
 
 ```bash
 cd aidf-front-end/reactapp
 npm install
 npm run dev
-````
+```

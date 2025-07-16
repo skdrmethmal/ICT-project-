@@ -28,6 +28,11 @@ const HotelCard = (props) => {
         </div>
         <p className="font-bold mt-2 text-xl">${props.hotel.price}</p>
       </div>
+      <div className="flex justify-start">
+        <p className="text-muted-foreground pl-2 pr-2 bg-blue-200 rounded-xl">
+          Simlarity: {props.confidence * 100}%
+        </p>
+      </div>
     </Link>
   );
 };

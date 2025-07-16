@@ -11,11 +11,15 @@
   "description": "",
   "dependencies": {
     "@clerk/express": "^1.4.7",
+    "@langchain/core": "^0.3.49",
+    "@langchain/mongodb": "^0.1.0",
+    "@langchain/openai": "^0.5.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "mongodb": "^6.15.0",
     "mongoose": "^8.13.2",
+    "openai": "^4.96.0",
     "zod": "^3.24.3"
   },
   "devDependencies": {

@@ -2,14 +2,18 @@ import { Input } from "./input";
 import { Button } from "./button";
 import { Sparkles } from "lucide-react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setSearchValue } from "../../lib/features/searchSlice";
 
 const Hero = () => {
   const [destination, setDestination] = useState("");
+  const dispatch = useDispatch();
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    console.log(destination);
-    setDestination("");
+  function handleSubmit(e) {
+    e.preventDefault();
+    const searchValue = e.target.search.value;
+    // console.log(searchValue);
+    dispatch(setSearchValue(searchValue));
   }
 
   return (
@@ -34,6 +38,7 @@ const Hero = () => {
             onSubmit={handleSubmit}
           >
             <Input
+              name="search"
               style={{ outline: "none", boxShadow: "none" }}
               className="  border-none w-[80%] bg-transparent text-white ring-0 "
               placeholder="Where are you going?"
