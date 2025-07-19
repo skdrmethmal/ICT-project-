@@ -13,26 +13,46 @@ import {
 import { useParams } from "react-router";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCreateBookingMutation } from "@/lib/api";
+import BookingModel from "@/components/ui/BookingModel";
+import { useState } from "react";
+import { useUser } from "@clerk/clerk-react";
+import { toast } from "sonner";
 
 const HotelPage = () => {
+  const { user, isLoaded: isUserLoaded } = useUser();
+  const [isModelOpen, setIsModelOpen] = useState(false);
   const { id } = useParams();
   const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(id);
 
   const [createBooking, { isLoading: isBookingLoading }] =
     useCreateBookingMutation();
 
-  const handleBooking = async () => {
+   const handleModelOpen = () => {
+    setIsModelOpen(true);
+    console.log("modelOppening");
+  };
+
+  const handleModelClose = () => {
+    setIsModelOpen(false);
+    console.log("modelClose");
+  };
+
+  //submitting booking
+  const handleBooking = async (data) => {
+    const { checkIn, checkOut } = data;
     try {
       await createBooking({
         hotelId: id,
-        checkIn: new Date(),
-        checkOut: new Date(),
-      });
+        checkIn: checkIn,
+        checkOut: checkOut,
+      }).unwrap();
+      toast.success("Booking has been made successfully");
     } catch (error) {
-      console.error(error);
+      toast.error("Booking failed");
     }
   };
-  if (isLoading) {
+
+   if (isLoading || !isUserLoaded) {
     return (
       <div className="container mx-auto px-4 py-8 min-h-screen">
         <div className="grid md:grid-cols-2 gap-8">
@@ -159,9 +179,16 @@ const HotelPage = () => {
                   <p className="text-2xl font-bold">${hotel.price}</p>
                   <p className="text-sm text-muted-foreground">per night</p>
                 </div>
-                <Button size="lg" onClick={handleBooking}>
+                <Button size="lg" onClick={handleModelOpen}>
                   Book Now
                 </Button>
+                <BookingModel
+                  isOpen={isModelOpen}
+                  onClose={handleModelClose}
+                  hotel={hotel}
+                  user={user}
+                  onSubmitBooking={handleBooking}
+                />
               </div>
             </div>
           </div>

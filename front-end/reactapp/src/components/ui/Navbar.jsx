@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { useUser } from "@clerk/clerk-react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 const Navbar = () => {
+  //state of the hamburger menu
   const [isOpen, setIsOpen] = useState(false);
   // const userSlice = useSelector((state) => state.user);
   const { user } = useUser();
