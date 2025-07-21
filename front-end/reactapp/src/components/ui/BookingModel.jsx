@@ -8,7 +8,6 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { MessageSquareWarning } from "lucide-react";
 import {
   Form,
   FormField,
@@ -33,11 +32,23 @@ const bookingSchema = z
     checkIn: z.string(),
     checkOut: z.string(),
     totalPrice: z.number(),
+    nights: z.number(),
   })
   .refine((data) => new Date(data.checkIn) < new Date(data.checkOut), {
     message: "Check-in date should be less than check-out date",
     path: ["checkOut"],
-  });
+  })
+  .refine(
+    (data) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return new Date(data.checkIn) >= today;
+    },
+    {
+      message: "Check-in date should be today or in the future.",
+      path: ["checkIn"],
+    }
+  );
 
 export default function BookingModel({
   isOpen,
@@ -47,6 +58,11 @@ export default function BookingModel({
   onSubmitBooking,
 }) {
   const [totalPrice, setTotalPrice] = useState(0);
+  const userFullName = user?.fullName;
+  const email = user?.emailAddresses?.[0]?.emailAddress;
+  // form.setValue("userFullName", userFullName);
+  // form.setValue("email", email);
+  // console.log(user?.emailAddresses[0].emailAddress);
 
   const form = useForm({
     resolver: zodResolver(bookingSchema),
@@ -54,15 +70,19 @@ export default function BookingModel({
     reValidateMode: "onBlur",
     defaultValues: {
       hotelId: hotel._id,
-      userId: user?.id,
-      userFullName: user?.fullName,
-      email: user?.emailAddresses[0].emailAddress,
       hotelName: hotel.name,
+      userId: user?.id,
+      userFullName: userFullName,
+      email: email,
+      totalPrice: totalPrice,
+      nights: 0,
       checkIn: "",
       checkOut: "",
-      totalPrice: totalPrice,
     },
   });
+
+  form.setValue("userFullName", userFullName);
+  form.setValue("email", email);
 
   const watchCheckIn = form.watch("checkIn");
   const watchCheckOut = form.watch("checkOut");
@@ -73,6 +93,7 @@ export default function BookingModel({
       const checkOutDate = new Date(watchCheckOut);
       const diffDats = checkOutDate - checkInDate;
       const diffDays = Math.ceil(diffDats / (1000 * 60 * 60 * 24));
+      form.setValue("nights", diffDays);
 
       if (checkInDate < checkOutDate) {
         setTotalPrice(hotel.price * diffDays);
@@ -85,128 +106,135 @@ export default function BookingModel({
   }, [watchCheckIn, watchCheckOut, hotel.price]);
 
   const handleFormSubmit = (data) => {
-    onSubmitBooking(data);
+    const completeData = {
+      ...data,
+      hotelImage: hotel.image,
+    };
+    // console.log(data);
+    onSubmitBooking(completeData);
 
     onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Booking Details</DialogTitle>
+      <DialogContent className="max-w-xl w-full bg-white rounded-2xl shadow-xl">
+        <DialogHeader className="text-left">
+          <DialogTitle className="text-2xl font-semibold text-zinc-800">
+            Booking Details
+          </DialogTitle>
+          <DialogDescription className="text-sm text-zinc-500">
+            Not showing your name and email address? Then you need to log in
+            first.
+          </DialogDescription>
         </DialogHeader>
+
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-            <div className="flex gap-4 items-center  justify-between">
-              {/* Hotel name field */}
+          <form
+            onSubmit={form.handleSubmit(handleFormSubmit)}
+            className="space-y-6"
+          >
+            {/* Hotel & User Name */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="hotelName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Hotel Name :</FormLabel>
+                    <FormLabel>Hotel Name</FormLabel>
                     <FormControl>
                       <Input
                         readOnly
                         {...field}
                         tabIndex={-1}
-                        className="bg-gray-100 w-full "
+                        className="bg-gray-100"
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
-              {/* User name field */}
               <FormField
                 control={form.control}
                 name="userFullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>User Name :</FormLabel>
+                    <FormLabel>User Name</FormLabel>
                     <FormControl>
                       <Input
                         readOnly
                         {...field}
                         tabIndex={-1}
-                        className="bg-gray-100 w-1/2 w-full"
+                        className="bg-gray-100"
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            {/* User email field */}
-            <div className="py-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>User Email :</FormLabel>
-                    <FormControl>
-                      <Input
-                        readOnly
-                        {...field}
-                        tabIndex={-1}
-                        className="bg-gray-100 w-1/2 w-full"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <hr />
-            {/* check in and out date field */}
-            <div className="flex py-4 gap-4 items-center  justify-between">
+
+            {/* Email */}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>User Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      readOnly
+                      {...field}
+                      tabIndex={-1}
+                      className="bg-gray-100"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {/* Dates */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="checkIn"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Check In :</FormLabel>
+                    <FormLabel>Check In</FormLabel>
                     <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                        className="bg-gray-100 w-full "
-                      />
+                      <Input type="date" {...field} className="bg-gray-100" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="checkOut"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Check Out :</FormLabel>
+                    <FormLabel>Check Out</FormLabel>
                     <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                        className="bg-gray-100  w-full "
-                      />
+                      <Input type="date" {...field} className="bg-gray-100" />
                     </FormControl>
-                    <FormMessage className="w-fill " />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            {/* total price */}
-            {totalPrice > 0 ? (
-              <div className="flex justify-end mt-4">
-                <p className=" text-xl font-bold">Total: ${totalPrice}</p>
-              </div>
-            ) : null}
 
+            {/* Total Price */}
+            {totalPrice > 0 && (
+              <div className="text-right text-lg font-semibold text-zinc-700">
+                Total: ${totalPrice}
+              </div>
+            )}
+
+            {/* Submit */}
             <DialogFooter>
-              <Button type="submit" className="w-full mt-4">
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={!form.formState.isValid}
+              >
                 Book
               </Button>
             </DialogFooter>

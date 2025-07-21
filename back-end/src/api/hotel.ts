@@ -5,6 +5,7 @@ import {
   addHotel,
   deleteHotel,
   updateHotel,
+  Generate,
 } from "../application/hotel";
 import { createEmbeddings } from "../application/embeddings";
 import isAuthenticated from "../middlewares/authentication-middleware";
@@ -15,9 +16,10 @@ const hotelsRouter = express.Router();
 hotelsRouter.get("/", getAllHotels);
 hotelsRouter.get("/:id", getHotelById);
 hotelsRouter.post("/", isAuthenticated, isAdmin, addHotel);
-hotelsRouter.delete("/:id", deleteHotel);
-hotelsRouter.put("/:id", updateHotel);
+hotelsRouter.delete("/:id", isAuthenticated, isAdmin, deleteHotel);
+hotelsRouter.put("/:id", isAuthenticated, isAdmin, updateHotel);
 hotelsRouter.post("/embeddings/create", createEmbeddings);
 hotelsRouter.get("/search/retrieve", retrieveByQuery);
+hotelsRouter.post("/generate", Generate);
 
 export default hotelsRouter;

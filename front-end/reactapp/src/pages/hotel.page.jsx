@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGetHotelByIdQuery } from "@/lib/api";
+import { useCreateReviewMutation } from "@/lib/api";
 import {
   Coffee,
   MapPin,
@@ -17,42 +18,121 @@ import BookingModel from "@/components/ui/BookingModel";
 import { useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router";
+import { ReviewModel } from "@/components/ui/ReviewModel";
+import { useGetReviewsByHotelIdQuery } from "@/lib/api";
+import { ReviewCardForHotel } from "@/components/ui/ReviewCardForHotel";
+import { ConfirmationModel } from "@/components/ui/ConfirmationModel";
+import { useDeleteHotelByIdMutation } from "@/lib/api";
 
 const HotelPage = () => {
+  const navigate = useNavigate();
   const { user, isLoaded: isUserLoaded } = useUser();
   const [isModelOpen, setIsModelOpen] = useState(false);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const { id } = useParams();
-  const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(id);
+  const {
+    data: hotel,
+    isLoading,
+    isError,
+    error,
+  } = useGetHotelByIdQuery({ hotelId: id });
+
+  // Fetch reviews for the hotel
+  const {
+    data: reviews,
+    isLoading: isReviewsLoading,
+    isError: isReviewError,
+  } = useGetReviewsByHotelIdQuery({ hotelId: id });
 
   const [createBooking, { isLoading: isBookingLoading }] =
     useCreateBookingMutation();
 
-   const handleModelOpen = () => {
+  const [createReview, { isLoading: isReviewLoading }] =
+    useCreateReviewMutation();
+
+  const [deleteHotelById] = useDeleteHotelByIdMutation();
+
+  const handleModelOpen = () => {
     setIsModelOpen(true);
-    console.log("modelOppening");
+  };
+
+  const handleReviewModelOpen = () => {
+    setIsReviewOpen(true);
+  };
+
+  const handleReviewModelClose = () => {
+    setIsReviewOpen(false);
   };
 
   const handleModelClose = () => {
     setIsModelOpen(false);
-    console.log("modelClose");
+  };
+
+  const handleConfirmationOpen = () => {
+    setIsConfirmationOpen(true);
+  };
+
+  const handleConfirmationClose = () => {
+    setIsConfirmationOpen(false);
+  };
+
+  const handleDeleteHotelConfirm = async () => {
+    try {
+      await deleteHotelById({ id: id }).unwrap();
+      toast.success("Hotel deleted successfully");
+      navigate("/");
+    } catch (error) {
+      console.error("Error deleting hotel:", error);
+      toast.error("Failed to delete hotel. Please try again.");
+    }
   };
 
   //submitting booking
   const handleBooking = async (data) => {
-    const { checkIn, checkOut } = data;
+    const { checkIn, checkOut, totalPrice, nights, hotelName, hotelImage } =
+      data;
     try {
-      await createBooking({
+      const booking = await createBooking({
         hotelId: id,
+        hotelImage: hotelImage,
         checkIn: checkIn,
         checkOut: checkOut,
+        totalPrice: totalPrice,
+        nights: nights,
+        hotelName: hotelName,
       }).unwrap();
-      toast.success("Booking has been made successfully");
+      navigate(`/booking/payment?bookingId=${booking._id}`);
+      //if successfull the toast success message will not be shown because of the navigate
+      // toast.success("Booking has been made successfully");
     } catch (error) {
       toast.error("Booking failed");
     }
   };
 
-   if (isLoading || !isUserLoaded) {
+  const handleReview = async (data) => {
+    const { rating, review } = data;
+
+    try {
+      const userReview = await createReview({
+        rating: rating,
+        review: review,
+        hotelId: id,
+      }).unwrap();
+      toast.success("Review has been submitted successfully");
+    } catch (error) {
+      if (error.status === 403) {
+        toast.error(error.data.message);
+      } else if (error.status === 400) {
+        toast.error(error.data.message);
+      } else {
+        toast.error("Review failed");
+      }
+    }
+  };
+
+  if (isLoading || !isUserLoaded || isReviewsLoading) {
     return (
       <div className="container mx-auto px-4 py-8 min-h-screen">
         <div className="grid md:grid-cols-2 gap-8">
@@ -111,8 +191,8 @@ const HotelPage = () => {
   return (
     <>
       <main>
-        <div className="container mx-auto px-4 py-8 min-h-screen">
-          <div className="grid md:grid-cols-2 gap-8">
+        <div className="container mx-auto px-4 py-8 min-h-screen ">
+          <div className="grid md:grid-cols-2 gap-8 ">
             <div className="space-y-4">
               <div className="relative w-full h-[400px]">
                 <img
@@ -179,17 +259,66 @@ const HotelPage = () => {
                   <p className="text-2xl font-bold">${hotel.price}</p>
                   <p className="text-sm text-muted-foreground">per night</p>
                 </div>
-                <Button size="lg" onClick={handleModelOpen}>
-                  Book Now
-                </Button>
-                <BookingModel
-                  isOpen={isModelOpen}
-                  onClose={handleModelClose}
-                  hotel={hotel}
-                  user={user}
-                  onSubmitBooking={handleBooking}
-                />
+                <div>
+                  {user?.publicMetadata?.role === "admin" && (
+                    <>
+                      <Button
+                        size="lg"
+                        className="mr-2"
+                        variant="destructive"
+                        onClick={handleConfirmationOpen}
+                      >
+                        Delete Hotel
+                      </Button>
+                      <ConfirmationModel
+                        isOpen={isConfirmationOpen}
+                        onClose={handleConfirmationClose}
+                        onConfirm={handleDeleteHotelConfirm}
+                      />
+                    </>
+                  )}
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={handleReviewModelOpen}
+                  >
+                    Leave a Review
+                  </Button>
+                  <ReviewModel
+                    isOpen={isReviewOpen}
+                    onClose={handleReviewModelClose}
+                    onSubmitReview={handleReview}
+                    isLoading={isReviewLoading}
+                  />
+                  <Button size="lg" className="ml-2" onClick={handleModelOpen}>
+                    Book Now
+                  </Button>
+                  <BookingModel
+                    isOpen={isModelOpen}
+                    onClose={handleModelClose}
+                    hotel={hotel}
+                    user={user}
+                    onSubmitBooking={handleBooking}
+                  />
+                </div>
               </div>
+            </div>
+          </div>
+          <div className="bg-card rounded-lg shadow-lg p-8 mt-12">
+            <h2 className="text-2xl font-semibold text-card-foreground mb-6">
+              Reviews
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* reviews cards */}
+              {reviews?.length > 0 ? (
+                reviews.map((review) => {
+                  return (
+                    <ReviewCardForHotel key={review._id} review={review} />
+                  );
+                })
+              ) : (
+                <div className="text-black-100">No reviews for this hotel</div>
+              )}
             </div>
           </div>
         </div>

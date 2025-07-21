@@ -39,9 +39,12 @@ export const retrieveByQuery = async (
       query as string
     );
 
+    const threshold = 0.7;
+    const filteredResults = results.filter(([doc, score]) => score > threshold);
+
     //returning the results
     const matchedHotels = await Promise.all(
-      results.map(async (result) => {
+      filteredResults.map(async (result) => {
         const hotel = await Hotel.findById(result[0].metadata._id);
         return {
           hotel: hotel,

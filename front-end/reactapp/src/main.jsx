@@ -9,6 +9,7 @@ import HotelPage from "./pages/hotel.page";
 import RootLayout from "./layouts/root.layout";
 import MainLayout from "./layouts/main.layout";
 import HotelsPage from "./pages/hotels.page";
+import PaymentPage from "./pages/payment.page";
 import { store } from "./lib/store";
 import { Provider } from "react-redux";
 import CreateHotelPage from "./pages/create-hotel.page";
@@ -16,6 +17,15 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import ProtectedLayout from "./layouts/protected.layout";
 import AccountPage from "./pages/account.page";
 import AdminLayout from "./layouts/admin.layout";
+import CompletePage from "./pages/complete.page";
+import AboutPage from "./pages/about.page";
+import HelpCenterPage from "./pages/help-center.page";
+import ContactUsPage from "./pages/contact-us.page";
+import PrivacyPolicyPage from "./pages/privacy-policy.page";
+import TermsOfServicePage from "./pages/terms-service.page";
+import CareerPage from "./pages/career.page";
+import BlogPage from "./pages/blog.page";
+import BookingsPage from "./pages/bookings.page";
 
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!clerkPubKey) {
@@ -36,12 +46,36 @@ createRoot(document.getElementById("root")).render(
                 <Route element={<ProtectedLayout />}>
                   <Route element={<AdminLayout />}>
                     <Route
-                      path="/create-hotel"
+                      path="/admin-dashboard"
                       element={<CreateHotelPage />}
+                    ></Route>
+                    {/* booking page */}
+                    <Route
+                      path="/admin-dashboard/bookings"
+                      element={<BookingsPage />}
                     ></Route>
                   </Route>
                   <Route path="/account" element={<AccountPage />}></Route>
+                  <Route
+                    path="/booking/payment"
+                    element={<PaymentPage />}
+                  ></Route>
                 </Route>
+                <Route
+                  path="/booking/complete"
+                  element={<CompletePage />}
+                ></Route>
+                <Route path="all-hotels" element={<HotelsPage />}></Route>
+                <Route path="about" element={<AboutPage />}></Route>
+                <Route path="/help" element={<HelpCenterPage />}></Route>
+                <Route path="/contact" element={<ContactUsPage />}></Route>
+                <Route
+                  path="/privacy-policy"
+                  element={<PrivacyPolicyPage />}
+                ></Route>
+                <Route path="/terms" element={<TermsOfServicePage />}></Route>
+                <Route path="/careers" element={<CareerPage />}></Route>
+                <Route path="/blog" element={<BlogPage />}></Route>
               </Route>
               <Route path="/sign-in" element={<SignInPage />}></Route>
               <Route path="/sign-up" element={<SignUpPage />}></Route>

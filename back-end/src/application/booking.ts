@@ -5,14 +5,17 @@ import ValidationError from "../domain/errors/validation-error";
 import { promise } from "zod";
 import { clerkClient } from "@clerk/express";
 
-interface AuthenticatedRequest extends Request {
-  auth?: {
-    userId?: string;
-  };
-}
+// interface AuthenticatedRequest extends Request {
+//   auth?: {
+//     userId?: string;
+//     userFullName?: string;
+//     emailAddresses?: Array<{ emailAddress: string }>;
+//   };
+// }
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const createBooking = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -27,16 +30,54 @@ export const createBooking = async (
     //   return;
     // }
 
-    const user = req.auth;
+    const userId = req.auth?.userId;
+    if (!userId) {
+      res.status(400).send("Please provide a user ID");
+      return;
+    }
+    const clerkUser = await clerkClient.users.getUser(userId);
+    const userFullName = clerkUser.fullName;
+    const email = clerkUser?.emailAddresses?.[0]?.emailAddress;
 
-    await Booking.create({
+    const savedBooking = await Booking.create({
       hotelId: newBooking.data.hotelId,
-      userId: user?.userId,
+      hotelName: newBooking.data.hotelName,
+      hotelImage: newBooking.data.hotelImage,
+      userId: userId,
+      userFullName: userFullName,
+      email: email,
+      totalPrice: newBooking.data.totalPrice,
+      roomNumber: await (async () => {
+        let roomNumber;
+        let isRoomAvailable = false;
+
+        while (!isRoomAvailable) {
+          roomNumber = Math.floor(Math.random() * 1000) + 1;
+
+          const existingBooking = await Booking.findOne({
+            hotelId: newBooking.data.hotelId,
+            roomNumber: roomNumber,
+            $or: [
+              {
+                checkIn: { $lte: newBooking.data.checkOut },
+                checkOut: { $gte: newBooking.data.checkIn },
+              },
+            ],
+          });
+
+          isRoomAvailable = !existingBooking;
+        }
+
+        return roomNumber;
+      })(),
+      nights: newBooking.data.nights,
       checkIn: newBooking.data.checkIn,
       checkOut: newBooking.data.checkOut,
     });
 
-    res.status(201).json({ newBooking, user: user?.userId });
+    // res.status(201).json({ newBooking, user: userId });
+    console.log(savedBooking._id);
+    res.status(201).json(savedBooking);
     return;
   } catch (error) {
     next(error);
@@ -106,7 +147,7 @@ export const getAllBookingsForUser = async (req: Request, res: Response) => {
   }
   const bookingsForUser = await Booking.find({ userId: userId });
   if (!bookingsForUser || bookingsForUser.length === 0) {
-    res.status(404).send("No bookings found for this user");
+    res.json([]);
     return;
   }
   res.status(200).json(bookingsForUser);
@@ -116,14 +157,15 @@ export const getAllBookingsForUser = async (req: Request, res: Response) => {
 export const deleteBooking = async (req: Request, res: Response) => {
   const bookingId = req.params.id;
   if (!bookingId) {
-    res.status(400).send("Please provide a booking ID");
+    res.status(400).json({ message: "Please provide a booking ID" });
     return;
   }
+
   const deletedBooking = await Booking.findByIdAndDelete(bookingId);
   if (!deletedBooking) {
-    res.status(404).send("Booking not found");
+    res.status(404).json({ message: "Booking not found" });
     return;
   }
-  res.status(200).send("Booking deleted successfully");
+  res.status(200).json({ message: "Booking deleted successfully" });
   return;
 };

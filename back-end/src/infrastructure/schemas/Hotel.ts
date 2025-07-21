@@ -5,17 +5,26 @@ const hotelSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  hotelEmail: {
+    type: String,
+    required: true,
+    default: "methmald1222@gmail.com",
+  },
   location: {
     type: String,
     required: true,
   },
+  totalRating: {
+    type: Number,
+    default: 0,
+  },
   rating: {
     type: Number,
-    max: 5.0,
-    min: 1.0,
+    default: 0.0,
   },
   reviews: {
     type: Number,
+    default: 0,
   },
   image: {
     type: String,
@@ -26,6 +35,14 @@ const hotelSchema = new mongoose.Schema({
     required: true,
   },
   description: {
+    type: String,
+    required: true,
+  },
+  stripePriceId: {
+    type: String,
+    required: true,
+  },
+  propertyType: {
     type: String,
     required: true,
   },
