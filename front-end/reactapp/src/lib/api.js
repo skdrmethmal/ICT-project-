@@ -23,6 +23,12 @@ const api = createApi({
     getHotelBySearch: builder.query({
       query: ({ query }) => `hotel/search/retrieve?query=${query}`,
     }),
+    getBookingsByUser: builder.query({
+      query: ({ userId }) => `booking/user/${userId}`,
+      providesTags: (result, error, { userId }) => [
+        { type: "Bookings", id: userId },
+      ],
+    }),
     createHotel: builder.mutation({
       query: (hotel) => ({
         url: "hotel",
@@ -36,6 +42,9 @@ const api = createApi({
         method: "POST",
         body: booking,
       }),
+      invalidatesTags: (result, error, { userId }) => [
+        { type: "Bookings", id: userId },
+      ],
     }),
     generateChat: builder.mutation({
       query: (messages) => ({
@@ -54,5 +63,6 @@ export const {
   useCreateBookingMutation,
   useGenerateChatMutation,
   useGetHotelBySearchQuery,
+  useGetBookingsByUserQuery,
 } = api;
 export { api };

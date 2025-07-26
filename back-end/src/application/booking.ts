@@ -8,8 +8,11 @@ import { clerkClient } from "@clerk/express";
 interface AuthenticatedRequest extends Request {
   auth?: {
     userId?: string;
+    userFullName?: string;
+    emailAddresses?: Array<{ emailAddress: string }>;
   };
 }
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const createBooking = async (
   req: AuthenticatedRequest,
@@ -27,16 +30,28 @@ export const createBooking = async (
     //   return;
     // }
 
-    const user = req.auth;
+    const userId = req.auth?.userId;
+    if (!userId) {
+      res.status(400).send("Please provide a user ID");
+      return;
+    }
+    const clerkUser = await clerkClient.users.getUser(userId);
+    const userFullName = clerkUser.fullName;
+    const email = clerkUser?.emailAddresses?.[0]?.emailAddress;
 
     await Booking.create({
       hotelId: newBooking.data.hotelId,
-      userId: user?.userId,
+      hotelName: newBooking.data.hotelName,
+      userId: userId,
+      userFullName: userFullName,
+      email: email,
+      totalPrice: newBooking.data.totalPrice,
+      nights: newBooking.data.nights,
       checkIn: newBooking.data.checkIn,
       checkOut: newBooking.data.checkOut,
     });
 
-    res.status(201).json({ newBooking, user: user?.userId });
+    res.status(201).json({ newBooking, user: userId });
     return;
   } catch (error) {
     next(error);
@@ -106,7 +121,7 @@ export const getAllBookingsForUser = async (req: Request, res: Response) => {
   }
   const bookingsForUser = await Booking.find({ userId: userId });
   if (!bookingsForUser || bookingsForUser.length === 0) {
-    res.status(404).send("No bookings found for this user");
+    res.json([]);
     return;
   }
   res.status(200).json(bookingsForUser);

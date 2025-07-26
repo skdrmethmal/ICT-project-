@@ -39,12 +39,15 @@ const HotelPage = () => {
 
   //submitting booking
   const handleBooking = async (data) => {
-    const { checkIn, checkOut } = data;
+    const { checkIn, checkOut, totalPrice, nights, hotelName } = data;
     try {
       await createBooking({
         hotelId: id,
         checkIn: checkIn,
         checkOut: checkOut,
+        totalPrice: totalPrice,
+        nights: nights,
+        hotelName: hotelName,
       }).unwrap();
       toast.success("Booking has been made successfully");
     } catch (error) {

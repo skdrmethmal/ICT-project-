@@ -33,6 +33,7 @@ const bookingSchema = z
     checkIn: z.string(),
     checkOut: z.string(),
     totalPrice: z.number(),
+    nights: z.number(),
   })
   .refine((data) => new Date(data.checkIn) < new Date(data.checkOut), {
     message: "Check-in date should be less than check-out date",
@@ -47,6 +48,11 @@ export default function BookingModel({
   onSubmitBooking,
 }) {
   const [totalPrice, setTotalPrice] = useState(0);
+  const userFullName = user?.fullName;
+  const email = user?.emailAddresses?.[0]?.emailAddress;
+  // form.setValue("userFullName", userFullName);
+  // form.setValue("email", email);
+  // console.log(user?.emailAddresses[0].emailAddress);
 
   const form = useForm({
     resolver: zodResolver(bookingSchema),
@@ -54,15 +60,19 @@ export default function BookingModel({
     reValidateMode: "onBlur",
     defaultValues: {
       hotelId: hotel._id,
-      userId: user?.id,
-      userFullName: user?.fullName,
-      email: user?.emailAddresses[0].emailAddress,
       hotelName: hotel.name,
+      userId: user?.id,
+      userFullName: userFullName,
+      email: email,
+      totalPrice: totalPrice,
+      nights: 0,
       checkIn: "",
       checkOut: "",
-      totalPrice: totalPrice,
     },
   });
+
+  form.setValue("userFullName", userFullName);
+  form.setValue("email", email);
 
   const watchCheckIn = form.watch("checkIn");
   const watchCheckOut = form.watch("checkOut");
@@ -73,6 +83,7 @@ export default function BookingModel({
       const checkOutDate = new Date(watchCheckOut);
       const diffDats = checkOutDate - checkInDate;
       const diffDays = Math.ceil(diffDats / (1000 * 60 * 60 * 24));
+      form.setValue("nights", diffDays);
 
       if (checkInDate < checkOutDate) {
         setTotalPrice(hotel.price * diffDays);
@@ -85,6 +96,7 @@ export default function BookingModel({
   }, [watchCheckIn, watchCheckOut, hotel.price]);
 
   const handleFormSubmit = (data) => {
+    // console.log(data);
     onSubmitBooking(data);
 
     onClose();
@@ -206,7 +218,11 @@ export default function BookingModel({
             ) : null}
 
             <DialogFooter>
-              <Button type="submit" className="w-full mt-4">
+              <Button
+                type="submit"
+                className="w-full mt-4"
+                disabled={!form.formState.isValid}
+              >
                 Book
               </Button>
             </DialogFooter>
