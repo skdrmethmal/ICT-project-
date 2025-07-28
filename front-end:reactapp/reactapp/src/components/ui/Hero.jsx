@@ -4,7 +4,7 @@ import { Sparkles } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setSearchValue } from "../../lib/features/searchSlice";
-
+import HeroImage from "@/assets/hero_1.jpg";
 const Hero = () => {
   const [destination, setDestination] = useState("");
   const dispatch = useDispatch();
@@ -19,7 +19,7 @@ const Hero = () => {
   return (
     <div className="relative w-full h-screen overflow-hidden">
       <img
-        src="/src/assets/hero_1.jpg"
+        src={HeroImage}
         alt="heroImage"
         className="absolute inset-0 w-full h-full object-cover z-[-10]"
       />

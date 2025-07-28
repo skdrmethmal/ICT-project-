@@ -1,9 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api/",
+    // baseUrl: "http://localhost:3000/api/",
+    baseUrl: `${BACKEND_URL}/api/`,
     prepareHeaders: async (headers) => {
       const token = await window?.Clerk?.session?.getToken();
 
@@ -28,6 +31,12 @@ const api = createApi({
       providesTags: (result, error, { userId }) => [
         { type: "Bookings", id: userId },
       ],
+    }),
+    getBookingById: builder.query({
+      query: (id) => `booking/${id}`,
+    }),
+    getSessionStatus: builder.query({
+      query: (sessionId) => `payment/session-status?sessionId=${sessionId}`,
     }),
     createHotel: builder.mutation({
       query: (hotel) => ({
@@ -64,5 +73,7 @@ export const {
   useGenerateChatMutation,
   useGetHotelBySearchQuery,
   useGetBookingsByUserQuery,
+  useGetBookingByIdQuery,
+  useGetSessionStatusQuery,
 } = api;
 export { api };

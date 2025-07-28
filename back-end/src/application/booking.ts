@@ -5,17 +5,17 @@ import ValidationError from "../domain/errors/validation-error";
 import { promise } from "zod";
 import { clerkClient } from "@clerk/express";
 
-interface AuthenticatedRequest extends Request {
-  auth?: {
-    userId?: string;
-    userFullName?: string;
-    emailAddresses?: Array<{ emailAddress: string }>;
-  };
-}
+// interface AuthenticatedRequest extends Request {
+//   auth?: {
+//     userId?: string;
+//     userFullName?: string;
+//     emailAddresses?: Array<{ emailAddress: string }>;
+//   };
+// }
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const createBooking = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -39,19 +39,44 @@ export const createBooking = async (
     const userFullName = clerkUser.fullName;
     const email = clerkUser?.emailAddresses?.[0]?.emailAddress;
 
-    await Booking.create({
+    const savedBooking = await Booking.create({
       hotelId: newBooking.data.hotelId,
       hotelName: newBooking.data.hotelName,
       userId: userId,
       userFullName: userFullName,
       email: email,
       totalPrice: newBooking.data.totalPrice,
+      roomNumber: await (async () => {
+        let roomNumber;
+        let isRoomAvailable = false;
+
+        while (!isRoomAvailable) {
+          roomNumber = Math.floor(Math.random() * 1000) + 1;
+
+          const existingBooking = await Booking.findOne({
+            hotelId: newBooking.data.hotelId,
+            roomNumber: roomNumber,
+            $or: [
+              {
+                checkIn: { $lte: newBooking.data.checkOut },
+                checkOut: { $gte: newBooking.data.checkIn },
+              },
+            ],
+          });
+
+          isRoomAvailable = !existingBooking;
+        }
+
+        return roomNumber;
+      })(),
       nights: newBooking.data.nights,
       checkIn: newBooking.data.checkIn,
       checkOut: newBooking.data.checkOut,
     });
 
-    res.status(201).json({ newBooking, user: userId });
+    // res.status(201).json({ newBooking, user: userId });
+    console.log(savedBooking._id);
+    res.status(201).json(savedBooking);
     return;
   } catch (error) {
     next(error);

@@ -2,7 +2,7 @@ import { useUser } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { useGetBookingsByUserQuery } from "@/lib/api";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookingCard } from "@/components/BookingCard";
+import { BookingCard } from "@/components/ui/BookingCard";
 
 const AccountPage = () => {
   const { user } = useUser();

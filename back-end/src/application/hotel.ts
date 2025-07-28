@@ -5,6 +5,9 @@ import ValidationError from "../domain/errors/validation-error";
 import { addHotelDTO } from "../domain/dtos/hotel";
 import { OpenAI } from "openai";
 import { createEmbedding } from "./embeddings";
+import stripe from "../infrastructure/stripe";
+import { parse } from "path";
+import { log } from "console";
 // const hotels = [
 //   {
 //     _id: "1",
@@ -116,6 +119,31 @@ import { createEmbedding } from "./embeddings";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+//one time run function
+const updateExistingHotels = async () => {
+  try {
+    const hotels = await Hotel.find({ stripePriceId: { $exists: false } });
+    hotels.forEach(async (hotel) => {
+      if (!hotel.stripePriceId) {
+        const stripeProduct = await stripe.products.create({
+          name: hotel.name,
+          description: hotel.description,
+          default_price_data: {
+            unit_amount: hotel.price * 100,
+            currency: "usd",
+          },
+        });
+        hotel.stripePriceId = stripeProduct.default_price as string;
+        await hotel.save();
+        console.log("Updated hotels with Stripe price IDs");
+      }
+    });
+  } catch (error) {
+    console.error("Error updating hotels:", error);
+  }
+};
+updateExistingHotels();
+
 export const getAllHotels = async (
   req: Request,
   res: Response,
@@ -184,6 +212,17 @@ export const addHotel = async (
     //   description: newHotel.description,
     // });
 
+    // creating a stripe product
+    const stripeProduct = await stripe.products.create({
+      name: newHotel.data.name,
+      description: newHotel.data.description,
+      default_price_data: {
+        unit_amount: newHotel.data.price * 100,
+        currency: "usd",
+      },
+    });
+
+    // creating a hotel with the stripe product id
     const savedHotel = await Hotel.create({
       name: newHotel.data.name,
       location: newHotel.data.location,
@@ -192,6 +231,7 @@ export const addHotel = async (
       image: newHotel.data.image,
       price: newHotel.data.price,
       description: newHotel.data.description,
+      stripePriceId: stripeProduct.default_price as string,
     });
 
     createEmbedding(savedHotel);

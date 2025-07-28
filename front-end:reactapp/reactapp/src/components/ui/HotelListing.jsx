@@ -36,6 +36,7 @@ const HotelListing = () => {
     data: hotels,
     isLoading,
     isError,
+    error,
   } = useGetHotelBySearchQuery({ query: searchValue });
 
   // const userSlice = useSelector((state) => state.user);
@@ -69,7 +70,7 @@ const HotelListing = () => {
         <p className="text-gray-700 mb-5">
           Discover the most trending hotels for an unforgettable experience
         </p>
-        <div className="flex gap-2 items-centers mb-4">
+        {/* <div className="flex gap-2 items-centers mb-4">
           {locations.map((location, Index) => (
             <LocationTab
               key={Index}
@@ -78,7 +79,7 @@ const HotelListing = () => {
               selectedLocation={selectedLocation}
             />
           ))}
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 ">
           <div>Loading ....</div>
@@ -96,7 +97,7 @@ const HotelListing = () => {
         <p className="text-gray-700 mb-5">
           Discover the most trending hotels for an unforgettable experience
         </p>
-        <div className="flex gap-2 items-centers mb-4">
+        {/* <div className="flex gap-2 items-centers mb-4">
           {locations.map((location, Index) => (
             <LocationTab
               key={Index}
@@ -105,10 +106,12 @@ const HotelListing = () => {
               selectedLocation={selectedLocation}
             />
           ))}
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 ">
-          <div className="text-red-500">{error}</div>
+          <div className="text-red-500">
+            {error.message || error.error || "Something went wrong"}
+          </div>
         </div>
       </div>
     );

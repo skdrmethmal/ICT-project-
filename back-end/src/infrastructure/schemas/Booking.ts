@@ -29,6 +29,10 @@ const bookingSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  roomNumber: {
+    type: Number,
+    required: true,
+  },
   nights: {
     type: Number,
     required: true,
@@ -40,6 +44,17 @@ const bookingSchema = new mongoose.Schema({
   checkOut: {
     type: Date,
     required: true,
+  },
+  //updates for the payment functionality
+  paymentStatus: {
+    type: String,
+    enum: ["PENDING", "PAID"],
+    default: "PENDING",
+  },
+  paymentMethod: {
+    type: String,
+    enum: ["CARD", "BAKN_TRANSFER"],
+    default: "CARD",
   },
 });
 

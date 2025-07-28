@@ -17,8 +17,10 @@ import BookingModel from "@/components/ui/BookingModel";
 import { useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 const HotelPage = () => {
+  const navigate = useNavigate();
   const { user, isLoaded: isUserLoaded } = useUser();
   const [isModelOpen, setIsModelOpen] = useState(false);
   const { id } = useParams();
@@ -41,7 +43,7 @@ const HotelPage = () => {
   const handleBooking = async (data) => {
     const { checkIn, checkOut, totalPrice, nights, hotelName } = data;
     try {
-      await createBooking({
+      const booking = await createBooking({
         hotelId: id,
         checkIn: checkIn,
         checkOut: checkOut,
@@ -49,7 +51,9 @@ const HotelPage = () => {
         nights: nights,
         hotelName: hotelName,
       }).unwrap();
-      toast.success("Booking has been made successfully");
+      navigate(`/booking/payment?bookingId=${booking._id}`);
+      //if successfull the toast success message will not be shown because of the navigate
+      // toast.success("Booking has been made successfully");
     } catch (error) {
       toast.error("Booking failed");
     }

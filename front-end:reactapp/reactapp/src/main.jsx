@@ -9,6 +9,7 @@ import HotelPage from "./pages/hotel.page";
 import RootLayout from "./layouts/root.layout";
 import MainLayout from "./layouts/main.layout";
 import HotelsPage from "./pages/hotels.page";
+import PaymentPage from "./pages/payment.page";
 import { store } from "./lib/store";
 import { Provider } from "react-redux";
 import CreateHotelPage from "./pages/create-hotel.page";
@@ -16,6 +17,7 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import ProtectedLayout from "./layouts/protected.layout";
 import AccountPage from "./pages/account.page";
 import AdminLayout from "./layouts/admin.layout";
+import CompletePage from "./pages/complete.page";
 
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!clerkPubKey) {
@@ -41,7 +43,15 @@ createRoot(document.getElementById("root")).render(
                     ></Route>
                   </Route>
                   <Route path="/account" element={<AccountPage />}></Route>
+                  <Route
+                    path="/booking/payment"
+                    element={<PaymentPage />}
+                  ></Route>
                 </Route>
+                <Route
+                  path="/booking/complete"
+                  element={<CompletePage />}
+                ></Route>
               </Route>
               <Route path="/sign-in" element={<SignInPage />}></Route>
               <Route path="/sign-up" element={<SignUpPage />}></Route>
