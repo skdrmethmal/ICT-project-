@@ -229,6 +229,7 @@ export const addHotel = async (
       // rating: parseFloat(newHotel.data.rating),
       // reviews: parseInt(newHotel.data.reviews),
       image: newHotel.data.image,
+      propertyType: newHotel.data.propertyType,
       price: newHotel.data.price,
       description: newHotel.data.description,
       stripePriceId: stripeProduct.default_price as string,

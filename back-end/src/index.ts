@@ -10,6 +10,7 @@ import { clerkMiddleware } from "@clerk/express";
 import globalErrorHandlingMiddleware from "./middlewares/global-error-handling-middleware";
 import { handleWebHook } from "./application/payment";
 import bodyParser from "body-parser";
+import reviewRouter from "./api/review";
 
 const FRONTEND_URL = process.env.FRONTEND_URL;
 const app = express();
@@ -40,6 +41,7 @@ app.use("/api/hotel", hotelsRouter);
 // app.use("/api/user", userRouter);
 app.use("/api/booking", bookingRouter);
 app.use("/api/payment", paymentRouter);
+app.use("/api/review", reviewRouter);
 
 app.use(globalErrorHandlingMiddleware);
 

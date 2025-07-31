@@ -42,6 +42,7 @@ export const createBooking = async (
     const savedBooking = await Booking.create({
       hotelId: newBooking.data.hotelId,
       hotelName: newBooking.data.hotelName,
+      hotelImage: newBooking.data.hotelImage,
       userId: userId,
       userFullName: userFullName,
       email: email,

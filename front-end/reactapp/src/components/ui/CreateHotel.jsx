@@ -22,6 +22,7 @@ const schema = z.object({
   image: z.string().min(3),
   price: z.number(),
   description: z.string().min(3),
+  propertyType: z.string().min(2),
 });
 
 const CreateHotel = () => {
@@ -34,12 +35,13 @@ const CreateHotel = () => {
       image: "",
       price: "",
       description: "",
+      propertyType: "",
     },
   });
 
   const handleSubmit = async (data) => {
     // console.log(data);
-    const { name, location, image, price, description } = data;
+    const { name, location, image, price, description, propertyType } = data;
     try {
       await createHotel({
         name: name,
@@ -47,6 +49,7 @@ const CreateHotel = () => {
         image: image,
         price: price,
         description: description,
+        propertyType: propertyType,
       }).unwrap();
       toast.success("Hotel created successfully");
     } catch (error) {
@@ -91,6 +94,7 @@ const CreateHotel = () => {
                   )}
                 />
               </div>
+
               <div className="mb-4">
                 <FormField
                   control={form.control}
@@ -100,6 +104,25 @@ const CreateHotel = () => {
                       <FormLabel>Hotel Image </FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="Hotel Image URL" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="mb-4">
+                <FormField
+                  control={form.control}
+                  name="propertyType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Property Type </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="hotel/cabin/hostel/villa/apartment"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

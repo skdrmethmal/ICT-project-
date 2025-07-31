@@ -38,6 +38,17 @@ const api = createApi({
     getSessionStatus: builder.query({
       query: (sessionId) => `payment/session-status?sessionId=${sessionId}`,
     }),
+    getReviewsByHotelId: builder.query({
+      query: ({ hotelId }) => `review/hotel/${hotelId}`,
+      providesTags: (result, error, { hotelId }) => [
+        { type: "Hotel", id: hotelId },
+      ],
+    }),
+    getReviewsForUser: builder.query({
+      query: () => `review/user`,
+      providesTags: () => [{ type: "userReviews" }],
+    }),
+
     createHotel: builder.mutation({
       query: (hotel) => ({
         url: "hotel",
@@ -53,6 +64,17 @@ const api = createApi({
       }),
       invalidatesTags: (result, error, { userId }) => [
         { type: "Bookings", id: userId },
+      ],
+    }),
+    createReview: builder.mutation({
+      query: (review) => ({
+        url: "review",
+        method: "POST",
+        body: review,
+      }),
+      invalidatesTags: (result, error, { hotelId }) => [
+        { type: "Hotel", id: hotelId },
+        { type: "userReviews" },
       ],
     }),
     generateChat: builder.mutation({
@@ -75,5 +97,8 @@ export const {
   useGetBookingsByUserQuery,
   useGetBookingByIdQuery,
   useGetSessionStatusQuery,
+  useCreateReviewMutation,
+  useGetReviewsByHotelIdQuery,
+  useGetReviewsForUserQuery,
 } = api;
 export { api };

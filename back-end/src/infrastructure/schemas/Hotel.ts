@@ -33,6 +33,10 @@ const hotelSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  propertyType: {
+    type: String,
+    required: true,
+  },
 });
 
 const Hotel = mongoose.model("Hotel", hotelSchema);

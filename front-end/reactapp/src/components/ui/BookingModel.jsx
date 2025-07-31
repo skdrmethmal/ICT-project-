@@ -96,8 +96,12 @@ export default function BookingModel({
   }, [watchCheckIn, watchCheckOut, hotel.price]);
 
   const handleFormSubmit = (data) => {
+    const completeData = {
+      ...data,
+      hotelImage: hotel.image,
+    };
     // console.log(data);
-    onSubmitBooking(data);
+    onSubmitBooking(completeData);
 
     onClose();
   };

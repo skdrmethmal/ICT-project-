@@ -11,10 +11,11 @@ const CompletePage = () => {
   const sessionId = searchParams.get("session_id");
 
   console.log("sessionId from URL:", sessionId);
-  console.log("payment data received:", data);
 
   const { data, isLoading, isError, error } =
     useGetSessionStatusQuery(sessionId);
+
+  console.log("payment data received:", data);
 
   if (isLoading) {
     return (
@@ -46,7 +47,7 @@ const CompletePage = () => {
     return <Navigate to={`/booking/payment?bookingId=${data?.bookingId}`} />;
   }
 
-  if (data?.status === "complete") {
+  if (data?.status === "complete" && !isLoading) {
     const checkInDate = new Date(data.booking.checkIn);
     const checkOutDate = new Date(data.booking.checkOut);
     const formattedCheckIn = format(checkInDate, "MMM dd, yyyy");

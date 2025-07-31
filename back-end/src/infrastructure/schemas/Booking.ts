@@ -17,6 +17,10 @@ const bookingSchema = new mongoose.Schema({
     // ref: "User",
     required: true,
   },
+  hotelImage: {
+    type: String,
+    required: true,
+  },
   userFullName: {
     type: String,
     required: true,

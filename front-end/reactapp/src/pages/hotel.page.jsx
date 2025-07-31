@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGetHotelByIdQuery } from "@/lib/api";
+import { useCreateReviewMutation } from "@/lib/api";
 import {
   Coffee,
   MapPin,
@@ -18,33 +19,55 @@ import { useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
+import { ReviewModel } from "@/components/ui/ReviewModel";
+import { useGetReviewsByHotelIdQuery } from "@/lib/api";
+import { ReviewCardForHotel } from "@/components/ui/ReviewCardForHotel";
 
 const HotelPage = () => {
   const navigate = useNavigate();
   const { user, isLoaded: isUserLoaded } = useUser();
   const [isModelOpen, setIsModelOpen] = useState(false);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
   const { id } = useParams();
   const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(id);
+
+  // Fetch reviews for the hotel
+  const {
+    data: reviews,
+    isLoading: isReviewsLoading,
+    isError: isReviewError,
+  } = useGetReviewsByHotelIdQuery({ hotelId: id });
 
   const [createBooking, { isLoading: isBookingLoading }] =
     useCreateBookingMutation();
 
+  const [createReview, { isLoading: isReviewLoading }] =
+    useCreateReviewMutation();
+
   const handleModelOpen = () => {
     setIsModelOpen(true);
-    console.log("modelOppening");
+  };
+
+  const handleReviewModelOpen = () => {
+    setIsReviewOpen(true);
+  };
+
+  const handleReviewModelClose = () => {
+    setIsReviewOpen(false);
   };
 
   const handleModelClose = () => {
     setIsModelOpen(false);
-    console.log("modelClose");
   };
 
   //submitting booking
   const handleBooking = async (data) => {
-    const { checkIn, checkOut, totalPrice, nights, hotelName } = data;
+    const { checkIn, checkOut, totalPrice, nights, hotelName, hotelImage } =
+      data;
     try {
       const booking = await createBooking({
         hotelId: id,
+        hotelImage: hotelImage,
         checkIn: checkIn,
         checkOut: checkOut,
         totalPrice: totalPrice,
@@ -59,7 +82,28 @@ const HotelPage = () => {
     }
   };
 
-  if (isLoading || !isUserLoaded) {
+  const handleReview = async (data) => {
+    const { rating, review, hotelId } = data;
+
+    try {
+      const userReview = await createReview({
+        rating: rating,
+        review: review,
+        hotelId: hotelId,
+      }).unwrap();
+      toast.success("Review has been submitted successfully");
+    } catch (error) {
+      if (error.status === 403) {
+        toast.error(error.data.message);
+      } else if (error.status === 400) {
+        toast.error(error.data.message);
+      } else {
+        toast.error("Review failed");
+      }
+    }
+  };
+
+  if (isLoading || !isUserLoaded || isReviewsLoading) {
     return (
       <div className="container mx-auto px-4 py-8 min-h-screen">
         <div className="grid md:grid-cols-2 gap-8">
@@ -118,8 +162,8 @@ const HotelPage = () => {
   return (
     <>
       <main>
-        <div className="container mx-auto px-4 py-8 min-h-screen">
-          <div className="grid md:grid-cols-2 gap-8">
+        <div className="container mx-auto px-4 py-8 min-h-screen ">
+          <div className="grid md:grid-cols-2 gap-8 ">
             <div className="space-y-4">
               <div className="relative w-full h-[400px]">
                 <img
@@ -186,17 +230,49 @@ const HotelPage = () => {
                   <p className="text-2xl font-bold">${hotel.price}</p>
                   <p className="text-sm text-muted-foreground">per night</p>
                 </div>
-                <Button size="lg" onClick={handleModelOpen}>
-                  Book Now
-                </Button>
-                <BookingModel
-                  isOpen={isModelOpen}
-                  onClose={handleModelClose}
-                  hotel={hotel}
-                  user={user}
-                  onSubmitBooking={handleBooking}
-                />
+                <div>
+                  <Button size="lg" className="mr-2" onClick={handleModelOpen}>
+                    Book Now
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={handleReviewModelOpen}
+                  >
+                    Leave a Review
+                  </Button>
+                  <BookingModel
+                    isOpen={isModelOpen}
+                    onClose={handleModelClose}
+                    hotel={hotel}
+                    user={user}
+                    onSubmitBooking={handleBooking}
+                  />
+                  <ReviewModel
+                    isOpen={isReviewOpen}
+                    onClose={handleReviewModelClose}
+                    hotelId={id}
+                    onSubmitReview={handleReview}
+                  />
+                </div>
               </div>
+            </div>
+          </div>
+          <div className="bg-card rounded-lg shadow-lg p-8 mt-12">
+            <h2 className="text-2xl font-semibold text-card-foreground mb-6">
+              Reviews
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* reviews cards */}
+              {reviews?.length > 0 ? (
+                reviews.map((review) => {
+                  return (
+                    <ReviewCardForHotel key={review._id} review={review} />
+                  );
+                })
+              ) : (
+                <div className="text-black-100">No reviews for this hotel</div>
+              )}
             </div>
           </div>
         </div>
