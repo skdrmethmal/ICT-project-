@@ -2,8 +2,15 @@ import { Link } from "react-router";
 import ShowcaseImageFirst from "@/assets/showcase_1.jpg";
 import ShowcaseImageSecond from "@/assets/showcase_2.jpg";
 import ShowcaseImageThird from "@/assets/showcase_3.jpg";
+import { Card } from "./card";
+import { Star } from "lucide-react";
 
 export function Showcase({ scrollToSearch }) {
+  const selectedRating = 3;
+
+  const handleStarClick = (value) => {
+    setSelectedRating(value);
+  };
   return (
     <section className="container mx-auto px-4 py-12  my-12">
       <div className="grid gap-6 lg:grid-cols-2">
@@ -58,6 +65,25 @@ export function Showcase({ scrollToSearch }) {
             </h2>
           </div>
         </div>
+      </div>
+      <div className="text-center mt-12  text-muted-foreground ">
+        <Card className=" max-w-[500px] mx-auto p-6 ">
+          <div className="flex items-center space-x-1 justify-center">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className={`h-10 w-10 cursor-pointer ${
+                  i < selectedRating ? "text-yellow-500" : "text-gray-300"
+                }`}
+                onClick={() => handleStarClick(i + 1)}
+              />
+            ))}
+          </div>
+          <p className="mt-4 text-sm text-muted-foreground">
+            If you are happy with our service, please consider leaving us a
+            review on Google.
+          </p>
+        </Card>
       </div>
     </section>
   );

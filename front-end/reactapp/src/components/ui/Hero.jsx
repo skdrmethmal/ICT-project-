@@ -7,7 +7,7 @@ import { Sparkles } from "lucide-react";
 import HeroImage from "@/assets/hero_1.jpg";
 import { forwardRef } from "react";
 
-export const Hero = forwardRef((props, ref) => {
+export const Hero = forwardRef(({ scrollToHotelList }, ref) => {
   const [destination, setDestination] = useState("");
   const dispatch = useDispatch();
 
@@ -15,6 +15,7 @@ export const Hero = forwardRef((props, ref) => {
     e.preventDefault();
     const searchValue = e.target.search.value;
     dispatch(setSearchValue(searchValue));
+    scrollToHotelList();
   };
 
   return (
@@ -52,6 +53,9 @@ export const Hero = forwardRef((props, ref) => {
               AI Search
             </Button>
           </form>
+          <div className="text-sm text-gray-500 italic">
+            Try: Hotels with rooftop views in Sydney, Australia
+          </div>
           {/* Statistics */}
           <div className="flex items-center space-x-6 pt-4">
             <div>

@@ -4,7 +4,7 @@ import { useGetBookingsByUserQuery } from "@/lib/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BookingCard } from "@/components/ui/BookingCard";
 import { useGetReviewsForUserQuery } from "@/lib/api";
-import { ReviewCardForUser } from "@/components/ReviewCardForUser";
+import { ReviewCardForUser } from "@/components/ui/ReviewCardForUser";
 import { useClerk } from "@clerk/clerk-react";
 
 const AccountPage = () => {

@@ -52,6 +52,7 @@ const CreateHotel = () => {
         propertyType: propertyType,
       }).unwrap();
       toast.success("Hotel created successfully");
+      form.reset();
     } catch (error) {
       toast.error("Hotel creation failed");
     }

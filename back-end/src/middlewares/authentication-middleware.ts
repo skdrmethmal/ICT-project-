@@ -10,7 +10,7 @@ import { log } from "console";
 
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   if (!req?.auth?.userId) {
-    throw new UnauthorizedError("Unauthorized");
+    throw new UnauthorizedError("Unauthorized: Please Log In");
   }
 
   next();

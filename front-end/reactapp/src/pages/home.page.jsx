@@ -5,15 +5,25 @@ import { useRef } from "react";
 
 function HomePage() {
   const searchRef = useRef(null);
+  const hotelListRef = useRef(null);
+
   const scrollToSearch = () => {
     searchRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const scrollToHotelList = () => {
+    hotelListRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <>
       <main>
-        <Hero ref={searchRef} />
-        <HotelListing scrollToSearch={scrollToSearch} />
+        <Hero ref={searchRef} scrollToHotelList={scrollToHotelList} />
+        <HotelListing
+          scrollToSearch={scrollToSearch}
+          scrollToHotelList={scrollToHotelList}
+          ref={hotelListRef}
+        />
       </main>
     </>
   );

@@ -33,6 +33,7 @@ export const createReview = async (
       res
         .status(403)
         .json({ message: "You must have a booking to leave a review" });
+      return;
     }
 
     const hasReview = await Review.findOne({

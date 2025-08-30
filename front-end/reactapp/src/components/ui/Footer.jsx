@@ -8,7 +8,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <h2 className="text-2xl font-bold mb-4">Horizone</h2>
+            <h2 className="text-2xl font-bold mb-4">HotelzaAI</h2>
             <p className="text-gray-400">
               Discover the perfect luxury accommodations for your next
               adventure.
@@ -45,7 +45,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/press"
+                  to="/"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Press
@@ -118,7 +118,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
           <p>
-            &copy; {new Date().getFullYear()} Horizone. All rights reserved.
+            &copy; {new Date().getFullYear()} HotelzaAI. All rights reserved.
           </p>
         </div>
       </div>

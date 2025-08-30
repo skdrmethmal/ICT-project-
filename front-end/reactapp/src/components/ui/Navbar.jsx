@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import { Link } from "react-router";
 import {
   Menu as MenuIcon,
@@ -9,7 +9,7 @@ import {
 import { useUser, SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button"; // shadcn button
 
-export function Navbar() {
+export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useUser();
 
@@ -41,10 +41,10 @@ export function Navbar() {
                 {user?.publicMetadata?.role === "admin" && (
                   <li>
                     <Link
-                      to="/create-hotel"
+                      to="/admin-dashboard"
                       className="font-medium text-gray-700 hover:text-black transition-colors relative group"
                     >
-                      Create Hotel
+                      Admin Dashboard
                       <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black transform scale-x-0 transition-transform group-hover:scale-x-100"></span>
                     </Link>
                   </li>
@@ -148,4 +148,4 @@ export function Navbar() {
       </div>
     </header>
   );
-}
+};

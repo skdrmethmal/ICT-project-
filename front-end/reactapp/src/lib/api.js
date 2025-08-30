@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { get } from "react-hook-form";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -77,6 +78,29 @@ const api = createApi({
         { type: "userReviews" },
       ],
     }),
+    createHelp: builder.mutation({
+      query: (help) => ({
+        url: "help",
+        method: "POST",
+        body: help,
+      }),
+      invalidatesTags: (result, error) => [{ type: "userHelp" }],
+    }),
+
+    getHelp: builder.query({
+      query: () => `help`,
+      providesTags: () => [{ type: "userHelp" }],
+    }),
+
+    replyToHelpRequest: builder.mutation({
+      query: (data) => ({
+        url: `help/reply`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: (result, error) => [{ type: "userHelp" }],
+    }),
+
     generateChat: builder.mutation({
       query: (messages) => ({
         url: "/generate",
@@ -100,5 +124,8 @@ export const {
   useCreateReviewMutation,
   useGetReviewsByHotelIdQuery,
   useGetReviewsForUserQuery,
+  useCreateHelpMutation,
+  useGetHelpQuery,
+  useReplyToHelpRequestMutation,
 } = api;
 export { api };

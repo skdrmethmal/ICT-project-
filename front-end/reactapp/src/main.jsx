@@ -18,6 +18,13 @@ import ProtectedLayout from "./layouts/protected.layout";
 import AccountPage from "./pages/account.page";
 import AdminLayout from "./layouts/admin.layout";
 import CompletePage from "./pages/complete.page";
+import AboutPage from "./pages/about.page";
+import HelpCenterPage from "./pages/help-center.page";
+import ContactUsPage from "./pages/contact-us.page";
+import PrivacyPolicyPage from "./pages/privacy-policy.page";
+import TermsOfServicePage from "./pages/terms-service.page";
+import CareerPage from "./pages/career.page";
+import BlogPage from "./pages/blog.page";
 
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!clerkPubKey) {
@@ -38,7 +45,7 @@ createRoot(document.getElementById("root")).render(
                 <Route element={<ProtectedLayout />}>
                   <Route element={<AdminLayout />}>
                     <Route
-                      path="/create-hotel"
+                      path="/admin-dashboard"
                       element={<CreateHotelPage />}
                     ></Route>
                   </Route>
@@ -52,6 +59,17 @@ createRoot(document.getElementById("root")).render(
                   path="/booking/complete"
                   element={<CompletePage />}
                 ></Route>
+                <Route path="all-hotels" element={<HotelsPage />}></Route>
+                <Route path="about" element={<AboutPage />}></Route>
+                <Route path="/help" element={<HelpCenterPage />}></Route>
+                <Route path="/contact" element={<ContactUsPage />}></Route>
+                <Route
+                  path="/privacy-policy"
+                  element={<PrivacyPolicyPage />}
+                ></Route>
+                <Route path="/terms" element={<TermsOfServicePage />}></Route>
+                <Route path="/careers" element={<CareerPage />}></Route>
+                <Route path="/blog" element={<BlogPage />}></Route>
               </Route>
               <Route path="/sign-in" element={<SignInPage />}></Route>
               <Route path="/sign-up" element={<SignUpPage />}></Route>

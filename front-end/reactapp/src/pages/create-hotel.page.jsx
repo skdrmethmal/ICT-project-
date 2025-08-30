@@ -1,4 +1,5 @@
 import { CreateHotel } from "@/components/ui/CreateHotel";
+import { HelpAUser } from "@/components/ui/HelpAUser";
 const CreateHotelPage = () => {
   // const [createHotel, { isLoading }] = useCreateHotelMutation();
   // const handleClick = async () => {
@@ -21,6 +22,7 @@ const CreateHotelPage = () => {
   return (
     <>
       <CreateHotel />
+      <HelpAUser />
     </>
   );
 };
