@@ -90,14 +90,33 @@ export const replyToHelpRequest = async (
       to,
       subject: `Reply: ${subject}`,
       html: `
-        <p>Hi ${name},</p>
-        <p><strong>Your original request:</strong></p>
-        <blockquote>${message}</blockquote>
-        <p><strong>Our response:</strong></p>
-        <p>${reply}</p>
-        <br/>
-        <p>— HotelzaAI Support Team</p>
-      `,
+    <div style="font-family: Arial, sans-serif; padding: 24px; background-color: #f9f9f9; color: #2d2d2d;">
+      <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 24px; border-radius: 10px; border: 1px solid #e5e7eb;">
+        
+        <h2 style="margin-bottom: 16px; color: #1a202c;">Hi ${name},</h2>
+        
+        <p style="font-size: 16px;">Thank you for reaching out to <strong>HotelzaAI Support</strong>. Here’s our response to your request:</p>
+
+        <div style="margin-top: 20px;">
+          <p style="font-weight: bold; margin-bottom: 6px;">Your original request:</p>
+          <blockquote style="margin: 0; padding: 12px 16px; background-color: #f3f4f6; border-left: 4px solid #4b5563; border-radius: 4px; font-style: italic;">
+            ${message}
+          </blockquote>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <p style="font-weight: bold; margin-bottom: 6px;">Our response:</p>
+          <p style="background-color: #fefefe; padding: 12px 16px; border: 1px solid #e5e7eb; border-radius: 4px; font-size: 15px;">
+            ${reply}
+          </p>
+        </div>
+
+        <p style="margin-top: 32px; font-size: 14px; color: #4b5563;">If you need further help, feel free to reach out again.</p>
+
+        <p style="margin-top: 24px;">— <strong>HotelzaAI Support Team</strong></p>
+      </div>
+    </div>
+  `,
     });
 
     await Help.findByIdAndDelete(helpId);

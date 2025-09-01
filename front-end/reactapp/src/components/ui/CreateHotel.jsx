@@ -18,6 +18,7 @@ import { toast } from "sonner";
 
 const schema = z.object({
   name: z.string().min(3),
+  hotelEmail: z.string().email(),
   location: z.string().min(3),
   image: z.string().min(3),
   price: z.number(),
@@ -31,6 +32,7 @@ const CreateHotel = () => {
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
+      hotelEmail: "",
       location: "",
       image: "",
       price: "",
@@ -41,10 +43,19 @@ const CreateHotel = () => {
 
   const handleSubmit = async (data) => {
     // console.log(data);
-    const { name, location, image, price, description, propertyType } = data;
+    const {
+      name,
+      location,
+      image,
+      price,
+      description,
+      propertyType,
+      hotelEmail,
+    } = data;
     try {
       await createHotel({
         name: name,
+        hotelEmail: hotelEmail,
         location: location,
         image: image,
         price: price,
@@ -61,7 +72,10 @@ const CreateHotel = () => {
   return (
     <div className="flex flex-col items-center justify-center md:mt-20 mt-10 ">
       <div className="mt-4 ml-4 w-5/6 md:w-1/2 bg-white rounded-lg p-10 border-1 border-gray-100 shadow-md">
-        <h1 className=" text-2xl font-bold mb-10 ">Create Hotel</h1>
+        <h1 className=" text-2xl font-bold mb-1 ">Create Hotel</h1>
+        <p className="text-sm text-gray-500 mb-10">
+          Create a new hotel to make it available for booking.
+        </p>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>
             <div>
@@ -74,6 +88,24 @@ const CreateHotel = () => {
                       <FormLabel>Hotel Name</FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="Hotel Name" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="mb-4">
+                <FormField
+                  control={form.control}
+                  name="hotelEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hotel Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Hotel Email - When a guest booked your hotel to imform that we use this email address to contact you"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -122,7 +154,7 @@ const CreateHotel = () => {
                       <FormControl>
                         <Input
                           {...field}
-                          placeholder="hotel/cabin/hostel/villa/apartment"
+                          placeholder="which property type is ur hotel/cabin/hostel/villa/apartment"
                         />
                       </FormControl>
                       <FormMessage />
@@ -162,7 +194,10 @@ const CreateHotel = () => {
                     <FormItem>
                       <FormLabel>Hotel Description</FormLabel>
                       <FormControl>
-                        <Textarea {...field} placeholder="Hotel Description" />
+                        <Textarea
+                          {...field}
+                          placeholder="Hotel Description should be in details because the description is what we use to suggest your hotel to guests based on their experience"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
