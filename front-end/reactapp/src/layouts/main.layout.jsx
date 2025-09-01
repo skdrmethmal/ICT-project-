@@ -3,6 +3,7 @@ import { Outlet } from "react-router";
 import { Footer } from "@/components/ui/Footer";
 import { useEffect } from "react";
 import { useLocation } from "react-router";
+import { ChatBotDialog } from "@/components/ui/ChatBotDialog";
 const MainLayout = () => {
   const location = useLocation();
   useEffect(() => {
@@ -13,6 +14,7 @@ const MainLayout = () => {
       <Navbar />
       <Outlet />
       <Footer />
+      <ChatBotDialog />
     </>
   );
 };

@@ -2,8 +2,10 @@ import React from "react";
 import { Hero } from "@/components/ui/Hero";
 import { HotelListing } from "@/components/ui/HotelListing";
 import { useRef } from "react";
+import { useGetAppStatisticsQuery } from "@/lib/api";
 
 function HomePage() {
+  const { data, isLoading, isError } = useGetAppStatisticsQuery();
   const searchRef = useRef(null);
   const hotelListRef = useRef(null);
 
@@ -18,8 +20,17 @@ function HomePage() {
   return (
     <>
       <main>
-        <Hero ref={searchRef} scrollToHotelList={scrollToHotelList} />
+        <Hero
+          ref={searchRef}
+          statistics={data}
+          isStatisticsError={isError}
+          isStatisticsLoading={isLoading}
+          scrollToHotelList={scrollToHotelList}
+        />
         <HotelListing
+          isNumberOfHotelsError={isError}
+          isNumberOfHotelsLoading={isLoading}
+          numberOfHotels={data?.hotelsCount}
           scrollToSearch={scrollToSearch}
           scrollToHotelList={scrollToHotelList}
           ref={hotelListRef}

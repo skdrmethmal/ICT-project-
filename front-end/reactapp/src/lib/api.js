@@ -100,12 +100,27 @@ const api = createApi({
       }),
       invalidatesTags: (result, error) => [{ type: "userHelp" }],
     }),
-
-    generateChat: builder.mutation({
-      query: (messages) => ({
-        url: "/generate",
+    getAppStatistics: builder.query({
+      query: () => `appstatistics`,
+    }),
+    checkHasRated: builder.query({
+      query: (userId) => `appstatistics/has-rated?userId=${userId}`,
+    }),
+    createAppRating: builder.mutation({
+      query: (data) => ({
+        url: `appstatistics`,
         method: "POST",
-        body: { messages },
+        body: data,
+      }),
+    }),
+    getLandingReviews: builder.query({
+      query: () => `appstatistics/landing-reviews`,
+    }),
+    ChatBot: builder.mutation({
+      query: (messages) => ({
+        url: "hotel/generate",
+        method: "POST",
+        body: messages,
       }),
     }),
   }),
@@ -116,7 +131,7 @@ export const {
   useGetHotelByIdQuery,
   useCreateHotelMutation,
   useCreateBookingMutation,
-  useGenerateChatMutation,
+  useChatBotMutation,
   useGetHotelBySearchQuery,
   useGetBookingsByUserQuery,
   useGetBookingByIdQuery,
@@ -127,5 +142,9 @@ export const {
   useCreateHelpMutation,
   useGetHelpQuery,
   useReplyToHelpRequestMutation,
+  useGetAppStatisticsQuery,
+  useCheckHasRatedQuery,
+  useCreateAppRatingMutation,
+  useGetLandingReviewsQuery,
 } = api;
 export { api };

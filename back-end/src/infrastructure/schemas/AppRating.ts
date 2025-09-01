@@ -9,6 +9,14 @@ const schema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  review: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const AppRating = mongoose.model("AppRating", schema);

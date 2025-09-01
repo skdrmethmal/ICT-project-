@@ -115,10 +115,10 @@ export const Navbar = () => {
             </Link>
             {user?.publicMetadata?.role === "admin" && (
               <Link
-                to="/create-hotel"
+                to="/admin-dashboard"
                 className="block text-gray-700 font-medium hover:text-black"
               >
-                Create Hotel
+                Admin
               </Link>
             )}
             <SignedOut>

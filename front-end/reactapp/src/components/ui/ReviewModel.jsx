@@ -24,11 +24,16 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Star } from "lucide-react";
 
-export const ReviewModel = ({ isOpen, onClose, hotelId, onSubmitReview }) => {
+export const ReviewModel = ({
+  isOpen,
+  onClose,
+  onSubmitReview,
+  isCompletePage = false,
+  isLoading,
+}) => {
   const [selectedRating, setSelectedRating] = useState(1);
 
   const reviewSchema = z.object({
-    hotelId: z.string(),
     rating: z.number().min(1, "Rating must be at least 1"),
     review: z.string().min(4, "Review must be at least 4 characters long"),
   });
@@ -36,7 +41,6 @@ export const ReviewModel = ({ isOpen, onClose, hotelId, onSubmitReview }) => {
   const form = useForm({
     resolver: zodResolver(reviewSchema),
     defaultValues: {
-      hotelId,
       rating: 1,
       review: "",
     },
@@ -56,11 +60,14 @@ export const ReviewModel = ({ isOpen, onClose, hotelId, onSubmitReview }) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Review Details</DialogTitle>
+          <DialogTitle>
+            {isCompletePage ? "Rate Us" : "Review Details"}
+          </DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Leave a Review (people only who had booked the hotel will be able to
-          give the review)
+          {isCompletePage
+            ? "If you are happy with our service, please consider leaving us a review on Google."
+            : "Leave a Review (people only who had booked the hotel will be able to give the review)"}
         </DialogDescription>
         <Form {...form}>
           <form
@@ -108,7 +115,7 @@ export const ReviewModel = ({ isOpen, onClose, hotelId, onSubmitReview }) => {
             />
             <DialogFooter>
               <Button type="submit" disabled={!form.formState.isValid}>
-                Submit
+                {isLoading ? "Submitting..." : "Submit"}
               </Button>
             </DialogFooter>
           </form>

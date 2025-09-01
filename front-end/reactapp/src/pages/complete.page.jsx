@@ -1,14 +1,28 @@
-import React from "react";
+import React, { use } from "react";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "react-router";
-import { useGetSessionStatusQuery } from "@/lib/api";
+import {
+  useGetSessionStatusQuery,
+  useCheckHasRatedQuery,
+  useCreateAppRatingMutation,
+} from "@/lib/api";
 import { Link } from "react-router";
 import { Navigate } from "react-router";
 import { format } from "date-fns";
+import { useState, useEffect } from "react";
+import { ReviewModel } from "@/components/ui/ReviewModel";
+import { toast } from "sonner";
+import { useUser } from "@clerk/clerk-react";
+
+//Auth rehydration error occured here - fixed and need to study about it furthur
 
 const CompletePage = () => {
+  const { user } = useUser();
+  const userId = user?.id;
   const [searchParams, setSearchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
+  const [showReviewDialog, setShowReviewDialog] = useState(false);
+  const [delayPassed, setDelayPassed] = useState(false);
 
   console.log("sessionId from URL:", sessionId);
 
@@ -16,6 +30,51 @@ const CompletePage = () => {
     useGetSessionStatusQuery(sessionId);
 
   console.log("payment data received:", data);
+
+  const {
+    data: hasRatedData,
+    isLoading: isHasRatedLoading,
+    isError: isHasRatedError,
+  } = useCheckHasRatedQuery(userId, {
+    skip: !userId,
+  });
+
+  const [createAppRating, { isLoading: isRatingLoading }] =
+    useCreateAppRatingMutation();
+
+  useEffect(() => {
+    console.log("Clerk userId is now:", user?.id);
+  }, [user]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDelayPassed(true);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (delayPassed && hasRatedData && hasRatedData.hasRated === false) {
+      setShowReviewDialog(true);
+    }
+  }, [delayPassed, hasRatedData]);
+
+  const handleReview = async (data) => {
+    const { rating, review } = data;
+    try {
+      await createAppRating({
+        rating: rating,
+        review: review,
+        userId: userId,
+      }).unwrap();
+      setShowReviewDialog(false);
+      setDelayPassed(false);
+      toast.success("Thanks for your review!");
+    } catch (error) {
+      toast.error("Review Submission failed");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -197,6 +256,13 @@ const CompletePage = () => {
             <Link to="/">Return to Home</Link>
           </Button>
         </div>
+        <ReviewModel
+          isOpen={showReviewDialog}
+          onClose={() => setShowReviewDialog(false)}
+          isCompletePage={true}
+          onSubmitReview={handleReview}
+          isLoading={isRatingLoading}
+        />
       </section>
     );
   }

@@ -12,9 +12,19 @@ import { PropertyTab } from "./PropertyTab";
 import { ClockFading } from "lucide-react";
 import { Link } from "react-router";
 import { PROPERTY, LOCATION } from "@/constents/constents";
+import { LandingReviews } from "./LandingReviews";
 
 const HotelListing = forwardRef(
-  ({ scrollToSearch, scrollToHotelList }, ref) => {
+  (
+    {
+      scrollToSearch,
+      scrollToHotelList,
+      numberOfHotels,
+      isNumberOfHotelsLoading,
+      isNumberOfHotelsError,
+    },
+    ref
+  ) => {
     // const [hotels, setHotels] = useState([]);
     // const [isLoading, setIsLoading] = useState(true);
     // const [isError, setIsError] = useState(false);
@@ -220,7 +230,13 @@ const HotelListing = forwardRef(
             <Link to="/all-hotels">View All Hotels</Link>
           </Button>
         </div>
-        <Showcase scrollToSearch={scrollToSearch} />
+        <Showcase
+          scrollToSearch={scrollToSearch}
+          numberOfHotels={numberOfHotels}
+          isNumberOfHotelsLoading={isNumberOfHotelsLoading}
+          isNumberOfHotelsError={isNumberOfHotelsError}
+        />
+        <LandingReviews />
       </div>
     );
   }

@@ -83,13 +83,13 @@ const HotelPage = () => {
   };
 
   const handleReview = async (data) => {
-    const { rating, review, hotelId } = data;
+    const { rating, review } = data;
 
     try {
       const userReview = await createReview({
         rating: rating,
         review: review,
-        hotelId: hotelId,
+        hotelId: id,
       }).unwrap();
       toast.success("Review has been submitted successfully");
     } catch (error) {
@@ -251,8 +251,8 @@ const HotelPage = () => {
                   <ReviewModel
                     isOpen={isReviewOpen}
                     onClose={handleReviewModelClose}
-                    hotelId={id}
                     onSubmitReview={handleReview}
+                    isLoading={isReviewLoading}
                   />
                 </div>
               </div>
