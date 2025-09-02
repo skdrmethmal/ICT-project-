@@ -5,7 +5,7 @@ import NodeCache from "node-cache";
 import Clerk from "@clerk/clerk-sdk-node";
 import { clerkClient } from "@clerk/express";
 
-const cache = new NodeCache({ stdTTL: 900 });
+const cache = new NodeCache({ stdTTL: 60 * 60 * 10 });
 
 export const getAppStatistics = async (
   req: Request,
@@ -51,7 +51,7 @@ export const getAppStatistics = async (
       appRating: averageRating,
     };
 
-    // 5. Cache the result for 15 minutes
+    // 5. Cache the result for 10 hours
     cache.set("appStats", statistics);
 
     res.json(statistics);
@@ -78,17 +78,28 @@ export const updateAppStatistics = async (
       res.status(400).json({ message: "Invalid userId" });
       return;
     }
+    const userData = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      profileImageUrl: user.imageUrl,
+    };
     const RatingCount = await AppRating.countDocuments({});
     console.log(RatingCount);
+
     if (RatingCount === 0) {
-      const newRating = AppRating.create({ userId, rating, review });
+      const newRating = AppRating.create({
+        userId,
+        rating,
+        review,
+        user: userData,
+      });
       res.status(200).json(newRating);
       return;
     }
 
     const updatedRating = await AppRating.findOneAndUpdate(
       { userId },
-      { rating, review },
+      { rating, review, user: userData },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
@@ -111,8 +122,6 @@ export const hasUserRated = async (
     return;
   }
   try {
-    await Clerk.users.getUser(userId);
-
     const hasRated = await AppRating.findOne({ userId });
 
     res.status(200).json({ hasRated: !!hasRated });
@@ -129,24 +138,17 @@ export const getLandingReviews = async (
   next: NextFunction
 ) => {
   try {
-    const landingReview = await AppRating.find({ rating: { $gte: 3 } })
+    const cachedReviews = cache.get("landingReviews");
+    if (cachedReviews) {
+      res.json(cachedReviews);
+      return;
+    }
+    const landingReviews = await AppRating.find({ rating: { $gte: 3 } })
       .sort({ createdAt: -1 })
       .limit(3);
-    const landingReviewsWithUser = await Promise.all(
-      landingReview.map(async (elreview) => {
-        const clerkUser = await clerkClient.users.getUser(elreview.userId);
-        return {
-          ...elreview.toObject(),
-          user: {
-            id: clerkUser.id,
-            firstName: clerkUser.firstName,
-            lastName: clerkUser.lastName,
-            profileImageUrl: clerkUser.imageUrl,
-          },
-        };
-      })
-    );
-    res.status(200).json(landingReviewsWithUser);
+
+    cache.set("landingReviews", landingReviews, 60 * 60 * 24);
+    res.status(200).json(landingReviews);
     return;
   } catch (error) {
     next(error);

@@ -59,6 +59,18 @@ export const createReview = async (
       review: newReview.data.review,
     });
 
+    await Hotel.findByIdAndUpdate(hotelId, {
+      $inc: {
+        reviews: 1,
+        totalRating: newReview.data.rating,
+      },
+    });
+
+    const updatedHotel = await Hotel.findById(hotelId);
+    if (updatedHotel) {
+      updatedHotel.rating = updatedHotel.totalRating / updatedHotel.reviews;
+      await updatedHotel.save();
+    }
     res.status(201).json(savedReview);
   } catch (error) {
     next(error);
@@ -134,6 +146,26 @@ export const getReviewsForUser = async (
       })
     );
     res.status(200).json(reviewsWithHotel);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteReview = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const reviewId = req.params.id;
+
+  try {
+    const review = await Review.findById(reviewId);
+    if (!review) {
+      res.status(404).json({ message: "Review not found" });
+      return;
+    }
+    await Review.deleteOne({ _id: reviewId });
+    res.status(200).json({ message: "Review deleted successfully" });
   } catch (error) {
     next(error);
   }

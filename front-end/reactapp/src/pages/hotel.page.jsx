@@ -22,14 +22,22 @@ import { useNavigate } from "react-router";
 import { ReviewModel } from "@/components/ui/ReviewModel";
 import { useGetReviewsByHotelIdQuery } from "@/lib/api";
 import { ReviewCardForHotel } from "@/components/ui/ReviewCardForHotel";
+import { ConfirmationModel } from "@/components/ui/ConfirmationModel";
+import { useDeleteHotelByIdMutation } from "@/lib/api";
 
 const HotelPage = () => {
   const navigate = useNavigate();
   const { user, isLoaded: isUserLoaded } = useUser();
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const { id } = useParams();
-  const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(id);
+  const {
+    data: hotel,
+    isLoading,
+    isError,
+    error,
+  } = useGetHotelByIdQuery({ hotelId: id });
 
   // Fetch reviews for the hotel
   const {
@@ -43,6 +51,8 @@ const HotelPage = () => {
 
   const [createReview, { isLoading: isReviewLoading }] =
     useCreateReviewMutation();
+
+  const [deleteHotelById] = useDeleteHotelByIdMutation();
 
   const handleModelOpen = () => {
     setIsModelOpen(true);
@@ -58,6 +68,25 @@ const HotelPage = () => {
 
   const handleModelClose = () => {
     setIsModelOpen(false);
+  };
+
+  const handleConfirmationOpen = () => {
+    setIsConfirmationOpen(true);
+  };
+
+  const handleConfirmationClose = () => {
+    setIsConfirmationOpen(false);
+  };
+
+  const handleDeleteHotelConfirm = async () => {
+    try {
+      await deleteHotelById({ id: id }).unwrap();
+      toast.success("Hotel deleted successfully");
+      navigate("/");
+    } catch (error) {
+      console.error("Error deleting hotel:", error);
+      toast.error("Failed to delete hotel. Please try again.");
+    }
   };
 
   //submitting booking
@@ -231,9 +260,23 @@ const HotelPage = () => {
                   <p className="text-sm text-muted-foreground">per night</p>
                 </div>
                 <div>
-                  <Button size="lg" className="mr-2" onClick={handleModelOpen}>
-                    Book Now
-                  </Button>
+                  {user?.publicMetadata?.role === "admin" && (
+                    <>
+                      <Button
+                        size="lg"
+                        className="mr-2"
+                        variant="destructive"
+                        onClick={handleConfirmationOpen}
+                      >
+                        Delete Hotel
+                      </Button>
+                      <ConfirmationModel
+                        isOpen={isConfirmationOpen}
+                        onClose={handleConfirmationClose}
+                        onConfirm={handleDeleteHotelConfirm}
+                      />
+                    </>
+                  )}
                   <Button
                     size="lg"
                     variant="outline"
@@ -241,18 +284,21 @@ const HotelPage = () => {
                   >
                     Leave a Review
                   </Button>
+                  <ReviewModel
+                    isOpen={isReviewOpen}
+                    onClose={handleReviewModelClose}
+                    onSubmitReview={handleReview}
+                    isLoading={isReviewLoading}
+                  />
+                  <Button size="lg" className="ml-2" onClick={handleModelOpen}>
+                    Book Now
+                  </Button>
                   <BookingModel
                     isOpen={isModelOpen}
                     onClose={handleModelClose}
                     hotel={hotel}
                     user={user}
                     onSubmitBooking={handleBooking}
-                  />
-                  <ReviewModel
-                    isOpen={isReviewOpen}
-                    onClose={handleReviewModelClose}
-                    onSubmitReview={handleReview}
-                    isLoading={isReviewLoading}
                   />
                 </div>
               </div>

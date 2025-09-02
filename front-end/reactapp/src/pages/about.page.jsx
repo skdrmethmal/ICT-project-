@@ -65,6 +65,36 @@ export default function AboutPage() {
               via their secure dashboard.
             </p>
           </div>
+          <div className="bg-card bg-zinc-900 rounded-xl p-6 shadow-md">
+            <h3 className="text-xl font-semibold text-white mb-2">
+              Hotelzi AI Support
+            </h3>
+            <p className="text-muted-foreground text-sm">
+              Hotelzi AI, our advanced chatbot, is available 24/7 to provide
+              instant assistance with your bookings, answer questions, and
+              streamline your planning process.
+            </p>
+          </div>
+          <div className="bg-card bg-zinc-900 rounded-xl p-6 shadow-md">
+            <h3 className="text-xl font-semibold text-white mb-2">
+              Email Reminders
+            </h3>
+            <p className="text-muted-foreground text-sm">
+              Enhance your travel experience with our proactive email reminders.
+              We'll notify you the day before your check-in, ensuring you're
+              well-prepared and informed.
+            </p>
+          </div>
+          <div className="bg-card rounded-xl bg-zinc-900 p-6 shadow-md">
+            <h3 className="text-xl font-semibold text-white mb-2">
+              Rate Your Experience
+            </h3>
+            <p className="text-muted-foreground text-sm">
+              We value your feedback! Rate your experience with us to share your
+              insights, help future travelers make informed decisions, and
+              contribute to our commitment to excellent service.
+            </p>
+          </div>
         </div>
 
         {/* CTA */}

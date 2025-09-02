@@ -44,6 +44,7 @@ export default function HelpCenterPage() {
       form.reset();
     } catch (error) {
       toast.error(error.data.message);
+      form.reset();
     }
   };
 

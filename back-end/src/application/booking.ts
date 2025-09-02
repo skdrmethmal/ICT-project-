@@ -157,14 +157,15 @@ export const getAllBookingsForUser = async (req: Request, res: Response) => {
 export const deleteBooking = async (req: Request, res: Response) => {
   const bookingId = req.params.id;
   if (!bookingId) {
-    res.status(400).send("Please provide a booking ID");
+    res.status(400).json({ message: "Please provide a booking ID" });
     return;
   }
+
   const deletedBooking = await Booking.findByIdAndDelete(bookingId);
   if (!deletedBooking) {
-    res.status(404).send("Booking not found");
+    res.status(404).json({ message: "Booking not found" });
     return;
   }
-  res.status(200).send("Booking deleted successfully");
+  res.status(200).json({ message: "Booking deleted successfully" });
   return;
 };

@@ -4,9 +4,10 @@ import { setSearchValue } from "../../lib/features/searchSlice";
 import { Input } from "./input";
 import { Button } from "./button";
 import { Sparkles } from "lucide-react";
-import HeroImage from "@/assets/hero_1.jpg";
+
 import { forwardRef } from "react";
 import CountUp from "react-countup";
+
 export const Hero = forwardRef(
   (
     { scrollToHotelList, statistics, isStatisticsLoading, isStatisticsError },
@@ -84,7 +85,7 @@ export const Hero = forwardRef(
             <div className="w-full lg:w-1/2">
               <div className="rounded-3xl overflow-hidden shadow-2xl">
                 <img
-                  src={HeroImage}
+                  src="/assets/hero_1.webp"
                   alt="Luxury hotel room"
                   className="w-full h-[500px] object-cover transition-transform duration-300 hover:scale-105"
                 />
@@ -165,7 +166,7 @@ export const Hero = forwardRef(
           <div className="w-full lg:w-1/2">
             <div className="rounded-3xl overflow-hidden shadow-2xl">
               <img
-                src={HeroImage}
+                src="/assets/hero_1.webp"
                 alt="Luxury hotel room"
                 className="w-full h-[500px] object-cover transition-transform duration-300 hover:scale-105"
               />

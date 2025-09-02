@@ -82,14 +82,16 @@ const AccountPage = () => {
       <div className=" rounded-xl shadow-xl p-8 mb-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
           {/* Profile Info */}
-          <div className="flex items-center gap-6">
+          <div className="sm:flex items-center gap-6">
             <img
               src={user.imageUrl}
               alt={user.fullName}
               className="w-24 h-24 rounded-full object-cover border-4 border-white"
             />
             <div>
-              <h1 className="text-2xl font-bold text-black">{user.fullName}</h1>
+              <h1 className="text-2xl font-bold text-black break-words">
+                {user.fullName}
+              </h1>
               <p className="text-sm text-gray-400">
                 {user.emailAddresses[0].emailAddress}
               </p>

@@ -1,12 +1,14 @@
 import { MapPin, Star } from "lucide-react";
 import { Link } from "react-router";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const HotelCard = (props) => {
   return (
     <Link to={`/hotel/${props.hotel._id}`}>
       <div className="bg-popover rounded-lg  hover:shadow-lg transition-shadow ">
         <div className="relative aspect-[4/3] overflow-hidden rounded-xl rounded-b-none block group relative">
-          <img
+          <LazyLoadImage
             src={props.hotel.image}
             alt={props.hotel.name}
             className="w-full h-full object-cover absolute transition-transform group-hover:scale-105"
@@ -34,7 +36,7 @@ const HotelCard = (props) => {
           </div>
           <div className="flex justify-start">
             {props.confidence ? (
-              <p className="text-muted-foreground pl-2 pr-2 bg-blue-200 rounded-xl">
+              <p className="text-muted-foreground pl-2 pr-2  bg-blue-200 rounded-xl">
                 Simlarity: {props.confidence * 100}%
               </p>
             ) : null}

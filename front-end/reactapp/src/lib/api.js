@@ -22,7 +22,10 @@ const api = createApi({
       query: () => "hotel",
     }),
     getHotelById: builder.query({
-      query: (id) => `hotel/${id}`,
+      query: ({ hotelId }) => `hotel/${hotelId}`,
+      providesTags: (result, error, { hotelId }) => [
+        { type: "Hotel", id: hotelId },
+      ],
     }),
     getHotelBySearch: builder.query({
       query: ({ query }) => `hotel/search/retrieve?query=${query}`,
@@ -78,6 +81,16 @@ const api = createApi({
         { type: "userReviews" },
       ],
     }),
+    deleteUserReview: builder.mutation({
+      query: (reviewId) => ({
+        url: `review/${reviewId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, { hotelId }) => [
+        { type: "Hotel", id: hotelId },
+        { type: "userReviews" },
+      ],
+    }),
     createHelp: builder.mutation({
       query: (help) => ({
         url: "help",
@@ -123,6 +136,27 @@ const api = createApi({
         body: messages,
       }),
     }),
+    getAllBookings: builder.query({
+      query: () => `booking`,
+    }),
+    deleteABooking: builder.mutation({
+      query: ({ id }) => ({
+        url: `booking/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, { userId }) => [
+        { type: "Bookings", id: userId },
+      ],
+    }),
+    deleteHotelById: builder.mutation({
+      query: ({ id }) => ({
+        url: `hotel/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, { hotelId }) => [
+        { type: "Hotel", id: hotelId },
+      ],
+    }),
   }),
 });
 
@@ -146,5 +180,9 @@ export const {
   useCheckHasRatedQuery,
   useCreateAppRatingMutation,
   useGetLandingReviewsQuery,
+  useDeleteABookingMutation,
+  useDeleteHotelByIdMutation,
+  useGetAllBookingsQuery,
+  useDeleteUserReviewMutation,
 } = api;
 export { api };

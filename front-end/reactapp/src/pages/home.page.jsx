@@ -3,6 +3,7 @@ import { Hero } from "@/components/ui/Hero";
 import { HotelListing } from "@/components/ui/HotelListing";
 import { useRef } from "react";
 import { useGetAppStatisticsQuery } from "@/lib/api";
+import WelcomeDialog from "@/components/ui/WelcomeDialog";
 
 function HomePage() {
   const { data, isLoading, isError } = useGetAppStatisticsQuery();
@@ -20,6 +21,7 @@ function HomePage() {
   return (
     <>
       <main>
+        <WelcomeDialog />
         <Hero
           ref={searchRef}
           statistics={data}

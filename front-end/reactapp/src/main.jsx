@@ -25,6 +25,7 @@ import PrivacyPolicyPage from "./pages/privacy-policy.page";
 import TermsOfServicePage from "./pages/terms-service.page";
 import CareerPage from "./pages/career.page";
 import BlogPage from "./pages/blog.page";
+import BookingsPage from "./pages/bookings.page";
 
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!clerkPubKey) {
@@ -47,6 +48,11 @@ createRoot(document.getElementById("root")).render(
                     <Route
                       path="/admin-dashboard"
                       element={<CreateHotelPage />}
+                    ></Route>
+                    {/* booking page */}
+                    <Route
+                      path="/admin-dashboard/bookings"
+                      element={<BookingsPage />}
                     ></Route>
                   </Route>
                   <Route path="/account" element={<AccountPage />}></Route>

@@ -157,7 +157,7 @@ const HotelListing = forwardRef(
     }
     return (
       <div className=" w-[90vw] sm:w-[95vw] max-w-[1500px] mx-auto   my-5">
-        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:flex justify-center gap-6 mb-12 ">
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:flex justify-center gap-6 mb-12 max-w-[1200px] mx-auto">
           {property.map((property, Index) => (
             <PropertyTab
               key={Index + 10}

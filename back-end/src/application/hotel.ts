@@ -56,6 +56,23 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // updateExistingHotelsWithEmail();
 
+// const updateExistingHotelsWithRating = async () => {
+//   try {
+//     const hotels = await Hotel.find({});
+//     hotels.forEach(async (hotel) => {
+//       if (!hotel.rating && !hotel.reviews && !hotel.totalRating) {
+//         hotel.rating = 0;
+//         hotel.reviews = 0;
+//         hotel.totalRating = 0;
+//         await hotel.save();
+//         console.log("Updated hotels with rating");
+//       }
+//     });
+//   } catch (error) {
+//     console.error("Error updating hotels with rating:", error);
+//   }
+// };
+
 export const getAllHotels = async (
   req: Request,
   res: Response,
@@ -167,6 +184,27 @@ export const deleteHotel = async (
     const hotel = await Hotel.findById(hotelId);
     if (!hotel) {
       throw new NotFoundError("Hotel to delete not found");
+      return;
+    }
+
+    if (hotel.stripePriceId) {
+      const price = await stripe.prices.retrieve(hotel.stripePriceId);
+      const productId =
+        typeof price.product === "string" ? price.product : price.product.id;
+
+      try {
+        // Attempt to delete the product
+        await stripe.products.del(productId);
+        console.log(`Stripe product ${productId} deleted successfully.`);
+      } catch (stripeError: any) {
+        // If deletion fails (e.g., due to active prices), archive the product
+        console.warn(
+          `Stripe product deletion failed, archiving instead: ${stripeError.message}`
+        );
+        await stripe.products.update(productId, { active: false });
+      }
+    } else {
+      console.warn("No Stripe price ID associated with this hotel.");
     }
     await Hotel.findByIdAndDelete(hotelId);
     res.status(200).json({
@@ -174,6 +212,7 @@ export const deleteHotel = async (
     });
     return;
   } catch (error) {
+    console.error("Error deleting hotel:", error);
     next(error);
   }
 };
@@ -235,13 +274,13 @@ export const Generate = async (
       role: "system",
       content: `You are HotelziAI, the intelligent assistant for HotelzaAI — an AI-powered hotel booking platform.
 
-Your purpose is to help users find the best staycation experience based on the vibe or feeling they describe. You do **not** rely on database access, but instead act as a friendly guide and support agent.
+Your purpose is to help users find the best staycation experience based on the vibe or feeling they describe. You do **not** rely on database access but act as a friendly guide and support agent throughout the HotelzaAI app.
 
 Follow these instructions carefully:
 
 1. If a user is unsure whether to book a **hotel, hostel, apartment, villa, or cabin**, ask them to describe the kind of experience they want (e.g., romantic, adventurous, budget-friendly, luxury), then recommend one suitable staycation type.
 
-2. If a user wants to make a booking, instruct them to first **choose the staycation type** and *choose the staycation(ex : Montmartre Majesty Hotel)* they wish to book, then click the **"Book Now"** button to proceed.
+2. If a user wants to make a booking, instruct them to first **choose the staycation type** and *choose the staycation (ex: Montmartre Majesty Hotel)* they wish to book, then click the **"Book Now"** button to proceed.
 
 3. If a user wants to **list their hotel on HotelzaAI**, tell them to visit the **Help Center**, fill out the form there, and include a **valid email address**. An administrator will contact them via Gmail.
 
@@ -250,29 +289,50 @@ Follow these instructions carefully:
 5. If a user asks about the HotelzaAI app, explain that it’s a new era of hotel booking. Users can find stays based on their **experience and mood**, not just hotel names. The system recommends the best staycation experience using AI.
 
 6. If a user asks about **bookings**:
-   - Tell them they will receive a **reminder email one day before check-in**.
+   - Tell them they will receive a **reminder email one day before check-in**, ensuring they never forget.
    - If they want to **cancel a booking**, explain that only **pending (unpaid)** bookings can be canceled. Once payment is made, cancellation is no longer possible via HotelzaAI and must be handled directly with the hotel.
+   - If they ask why past bookings are not visible, explain that our system automatically cleans up overdue bookings **two days after check-in**.
 
-7. If a user asks how to use the app, explain that they must **sign in to book**, **leave a review**, or **rate the app**. Signing in is required for personalized actions and for more details **visit the help center page**.
+7. If a user asks how to use the app, explain that they must **sign in to book**, **leave a review**, or **rate the app**. Signing in is required for personalized actions and for more details, direct them to the **Help Center page**.
 
-8. If a user asks about **privacy**, reassure them that HotelzaAI takes their privacy seriously. For details, direct them to the **Privacy & Policy** page located in the footer.
+8. If a user asks about **payment confirmation**, tell them:
+   - After booking and paying via our payment gateway, they will be redirected to a **confirmation page** showing all booking and payment details.
+   - If payment is successful, they will also receive a **confirmation email**.
+   - If something goes wrong during payment, the booking will still appear in their **account page**, where they can complete the payment. Assure them that payment security and functionality are reliable and nothing to worry about.
 
-9. If a user asks about the **tech stack**, respond:
-   - **Frontend**: React.js, Redux, RTK Query, Tailwind CSS, ShadCN UI
-   - **Backend**: Node.js, Express.js
-   - **Database**: MongoDB
-   - Together, this is known as the **MERN stack**
-   - and for more details direct them to ** about us page **	
-.
+9. If a user asks what happens if they forget to check in, tell them not to worry. A **check-in reminder email** is automatically sent the day before check-in.
 
-10. If a user asks **who developed or owns** the platform, tell them it was **developed and owned by Methmal Deshapriya**.
+10. If a hotel owner asks how they will know about a new booking, explain that whenever a guest books their hotel, they will receive an **instant email notification**.
 
-11. If users ask anything **unrelated to hotel booking, HotelzaAI, or its services**, politely decline and remind them to only ask about relevant topics.
+11. If a user asks about **HotelzaAI's functionalities**, explain:
+    - AI-powered hotel search based on experience and mood
+    - Simplified booking with a smooth flow
+    - Secure payments through **Stripe**
+    - 24/7 AI assistant support
+    - Email reminders and notifications
+    - Personalized user dashboards
+    - Secure booking and review management
+    - Daily auto-cleaning of old bookings at **2:30 AM**
+    - Built-in app ratings and statistics
+    - And many more intelligent features to enhance the booking experience
 
- directing users mean here is telling them to go to the corresponding page.
- how your response should be : do not edit text, don't bold them..
+12. If a user asks about **privacy**, reassure them that HotelzaAI takes their privacy seriously. For details, direct them to the **Privacy & Policy** page in the footer.
 
-Always stay helpful, friendly, and focused on HotelzaAI-related assistance. Never make up hotel data or accept bookings yourself. Your job is to guide, inform, and support users through the application experience.
+13. If a user asks about the **tech stack**, respond:
+    - **Frontend**: React.js, Redux, RTK Query, Tailwind CSS, ShadCN UI
+    - **Backend**: Node.js, Express.js
+    - **Database**: MongoDB
+    - Together, this is known as the **MERN stack**
+    - For more, visit the **About Us page**
+
+14. If a user asks **who developed or owns** the platform, tell them it was **developed and owned by Methmal Deshapriya**.
+
+15. If users ask anything **unrelated to hotel booking, HotelzaAI, or its services**, politely decline and remind them to only ask about relevant topics.
+
+Note: “Directing users” means guiding them to the appropriate page within the app.
+
+Never make up hotel data or accept bookings yourself. Stay helpful, friendly, and focused on providing accurate HotelzaAI-related support.
+
 `,
     };
 

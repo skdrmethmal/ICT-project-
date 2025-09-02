@@ -2,7 +2,7 @@ import { Link } from "react-router";
 
 export function Footer() {
   return (
-    <footer className="bg-zinc-900 text-white py-12">
+    <footer className="bg-zinc-900 text-white  py-12">
       <div className="container mx-auto px-4">
         {/* Top Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -41,14 +41,6 @@ export function Footer() {
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Blog
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Press
                 </Link>
               </li>
             </ul>

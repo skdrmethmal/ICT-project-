@@ -14,11 +14,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useChatBotMutation } from "@/lib/api";
-import bot_image from "@/assets/bot_2.jpg";
 import { SendHorizonal } from "lucide-react";
-
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 const schema = z.object({
-  message: z.string().min(10, "Message must be at least 10 characters."),
+  message: z.string().min(1),
 });
 
 export const ChatBotDialog = () => {
@@ -59,15 +59,19 @@ export const ChatBotDialog = () => {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <div className="fixed bottom-6 right-6  rounded-full w-18 h-18 shadow-md p-4 bg-white text-white hover:h-20 hover:w-20  transition">
-            <img src={bot_image} alt="Avatar" className=" rounded-full" />
+            <img
+              src="/assets/bot_icon.webp"
+              alt="Avatar"
+              className=" rounded-full"
+            />
           </div>
         </DialogTrigger>
 
         <DialogContent className="max-w-md w-full border-none shadow-xl p-0 bg-white rounded-xl overflow-hidden">
           <DialogTitle>
             <div className="bg-white shadow-md  px-4 py-3 flex items-center gap-3">
-              <img
-                src={bot_image}
+              <LazyLoadImage
+                src="/assets/bot_icon.webp"
                 alt="Avatar"
                 className="w-10 h-10 rounded-full border-1 border-gray-200"
               />
@@ -118,7 +122,6 @@ export const ChatBotDialog = () => {
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />

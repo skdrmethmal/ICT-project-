@@ -1,11 +1,6 @@
 import { forwardRef, useState } from "react";
 import { Link } from "react-router";
-import {
-  Menu as MenuIcon,
-  X,
-  Search as SearchIcon,
-  User as UserIcon,
-} from "lucide-react";
+import { Menu as MenuIcon, X, User as UserIcon } from "lucide-react";
 import { useUser, SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button"; // shadcn button
 
@@ -54,10 +49,6 @@ export const Navbar = () => {
 
             {/* Right - Auth Buttons & Icons */}
             <div className="flex items-center space-x-4">
-              <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                <SearchIcon size={20} className="text-gray-600" />
-              </button>
-
               <SignedOut>
                 <Link to="/sign-in">
                   <Button

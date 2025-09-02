@@ -23,7 +23,7 @@ export default function ContactUsPage() {
           <div>
             📧{" "}
             <span className="font-medium text-black">
-              methmaldeshapriya2002@gmail.com
+              methmald1222@gmail.com
             </span>
           </div>
           <div>🕒 Business Hours: Monday – Friday, 9:00 AM – 6:00 PM</div>

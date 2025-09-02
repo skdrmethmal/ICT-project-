@@ -13,6 +13,9 @@ import bodyParser from "body-parser";
 import reviewRouter from "./api/review";
 import helpRouter from "./api/help";
 import appStatisticsRouter from "./api/appstatistics";
+import cron from "node-cron";
+import { deleteExpiredBookings } from "./utills/sheduledJobs";
+import { sendCheckInReminders } from "./utills/sheduledJobs";
 
 const FRONTEND_URL = process.env.FRONTEND_URL;
 const app = express();
@@ -37,7 +40,15 @@ app.post(
 app.use(express.json());
 
 //Connect to the database
-connectDB();
+connectDB().then(() => {
+  cron.schedule("30 2 * * *", async () => {
+    console.log("Running daily booking cleanup...");
+    await deleteExpiredBookings();
+
+    console.log("Running check-in reminders...");
+    await sendCheckInReminders();
+  });
+});
 
 app.use("/api/hotel", hotelsRouter);
 // app.use("/api/user", userRouter);

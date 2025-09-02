@@ -66,11 +66,12 @@ const CreateHotel = () => {
       form.reset();
     } catch (error) {
       toast.error("Hotel creation failed");
+      form.reset();
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center md:mt-20 mt-10 ">
+    <div className="flex flex-col items-center justify-center md:mt-10 mt-5 ">
       <div className="mt-4 ml-4 w-5/6 md:w-1/2 bg-white rounded-lg p-10 border-1 border-gray-100 shadow-md">
         <h1 className=" text-2xl font-bold mb-1 ">Create Hotel</h1>
         <p className="text-sm text-gray-500 mb-10">

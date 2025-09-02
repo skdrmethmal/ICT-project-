@@ -1,5 +1,6 @@
 import { CreateHotel } from "@/components/ui/CreateHotel";
 import { HelpAUser } from "@/components/ui/HelpAUser";
+import { Link } from "react-router";
 const CreateHotelPage = () => {
   // const [createHotel, { isLoading }] = useCreateHotelMutation();
   // const handleClick = async () => {
@@ -21,6 +22,17 @@ const CreateHotelPage = () => {
   // };
   return (
     <>
+      <div className="flex flex-col items-center justify-center md:mt-20 mt-10 ">
+        <div className=" flex items-center justify-center w-5/6 md:w-1/2 bg-white rounded-full p-5 border-1 border-gray-100 shadow-md">
+          <Link
+            to="/admin-dashboard/bookings"
+            className="font-medium text-gray-700 hover:text-black  transition-colors relative group"
+          >
+            Check Bookings
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black transform scale-x-0 transition-transform group-hover:scale-x-100"></span>
+          </Link>
+        </div>
+      </div>
       <CreateHotel />
       <HelpAUser />
     </>

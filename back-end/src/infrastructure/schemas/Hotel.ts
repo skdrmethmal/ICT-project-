@@ -8,18 +8,23 @@ const hotelSchema = new mongoose.Schema({
   hotelEmail: {
     type: String,
     required: true,
+    default: "methmald1222@gmail.com",
   },
   location: {
     type: String,
     required: true,
   },
+  totalRating: {
+    type: Number,
+    default: 0,
+  },
   rating: {
     type: Number,
-    max: 5.0,
-    min: 1.0,
+    default: 0.0,
   },
   reviews: {
     type: Number,
+    default: 0,
   },
   image: {
     type: String,

@@ -101,7 +101,7 @@ const HotelsPage = () => {
         Discover the most trending hotels for an unforgettable experience
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:flex justify-center gap-6 mb-12 ">
+      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 max-w-[1200px] mx-auto lg:grid-cols-5 xl:flex justify-center gap-6 mb-12 ">
         {property.map((property, Index) => (
           <PropertyTab
             key={Index + 10}

@@ -1,6 +1,5 @@
-import ShowcaseImageFirst from "@/assets/showcase_1.jpg";
-import ShowcaseImageSecond from "@/assets/showcase_2.jpg";
-import ShowcaseImageThird from "@/assets/showcase_3.jpg";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 export function Showcase({
   scrollToSearch,
@@ -28,10 +27,11 @@ export function Showcase({
         <div className="">
           {/* Top left block */}
           <div className="relative h-[300px] rounded-2xl overflow-hidden">
-            <img
-              src={ShowcaseImageFirst}
+            <LazyLoadImage
+              src="/assets/showcase_11.webp"
               alt="Outdoor view"
               className="w-full h-full object-cover "
+              effect="blur"
             />
             <div className="absolute inset-0 bg-black/40  flex flex-col justify-center p-8 text-white">
               <h2 className="text-2xl font-bold mb-2">
@@ -50,10 +50,11 @@ export function Showcase({
 
           {/* Bottom left block */}
           <div className="relative h-[250px] mt-6 rounded-2xl overflow-hidden col-span-full lg:col-span-1">
-            <img
-              src={ShowcaseImageSecond}
+            <LazyLoadImage
+              src="/assets/showcase_22.webp"
               alt="Hotel exterior"
               className="w-full h-full object-cover"
+              effect="blur"
             />
             <div className="absolute inset-0  bg-black/40 p-6 text-white flex flex-col justify-end">
               <p className="text-sm">Find your Perfect</p>
@@ -64,10 +65,11 @@ export function Showcase({
 
         {/* Right block */}
         <div className="relative h-[300px] lg:h-full  rounded-2xl overflow-hidden col-span-full lg:col-span-1">
-          <img
-            src={ShowcaseImageThird}
+          <LazyLoadImage
+            src="/assets/showcase_33.webp"
             alt="Hotel room"
             className="w-full h-full object-cover"
+            effect="blur"
           />
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-8 text-white text-center">
             <h2 className="text-2xl font-bold max-w-md leading-snug">
@@ -86,8 +88,8 @@ export function Showcase({
         <div className="">
           {/* Top left block */}
           <div className="relative h-[300px] rounded-2xl overflow-hidden">
-            <img
-              src={ShowcaseImageFirst}
+            <LazyLoadImage
+              src="/assets/showcase_11.webp"
               alt="Outdoor view"
               className="w-full h-full object-cover "
             />
@@ -108,8 +110,8 @@ export function Showcase({
 
           {/* Bottom left block */}
           <div className="relative h-[250px] mt-6 rounded-2xl overflow-hidden col-span-full lg:col-span-1">
-            <img
-              src={ShowcaseImageSecond}
+            <LazyLoadImage
+              src="/assets/showcase_22.webp"
               alt="Hotel exterior"
               className="w-full h-full object-cover"
             />
@@ -122,8 +124,8 @@ export function Showcase({
 
         {/* Right block */}
         <div className="relative h-[300px] lg:h-full  rounded-2xl overflow-hidden col-span-full lg:col-span-1">
-          <img
-            src={ShowcaseImageThird}
+          <LazyLoadImage
+            src="/assets/showcase_33.webp"
             alt="Hotel room"
             className="w-full h-full object-cover"
           />
