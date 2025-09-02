@@ -47,7 +47,7 @@ This is a full-stack application developed for the **HotelsForStaycation**, incl
 ### 🖥️ Backend
 
 ```bash
-cd aidf-back-end
+cd back-end
 npm install
 npm run dev
 ```
@@ -55,7 +55,7 @@ npm run dev
 ### 📺 Frontend
 
 ```bash
-cd aidf-front-end/reactapp
+cd front-end/reactapp
 npm install
 npm run dev
 ```
