@@ -97,6 +97,7 @@ const api = createApi({
         method: "POST",
         body: help,
       }),
+
       invalidatesTags: (result, error) => [{ type: "userHelp" }],
     }),
 

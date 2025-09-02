@@ -184,7 +184,7 @@ const HotelListing = forwardRef(
       >
         Click Me
       </Button> */}
-        <div className="flex gap-2 items-centers mb-4">
+        <div className="sm:flex sm:gap-2 items-centers mb-4 grid grid-cols-4 gap-2">
           {locations.map((location, Index) => (
             <LocationTab
               key={Index}

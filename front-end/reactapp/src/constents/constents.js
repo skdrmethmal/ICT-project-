@@ -31,4 +31,12 @@ export const PROPERTY = [
   },
 ];
 
-export const LOCATION = ["ALL", "France", "Australia", "Japan", "Italy"];
+export const LOCATION = [
+  "ALL",
+  "France",
+  "Australia",
+  "Japan",
+  "Italy",
+  "Sri Lanka",
+  "UAE",
+];

@@ -8,7 +8,6 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { MessageSquareWarning } from "lucide-react";
 import {
   Form,
   FormField,
@@ -21,7 +20,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { data } from "react-router";
 
 //zod schema validation
 const bookingSchema = z

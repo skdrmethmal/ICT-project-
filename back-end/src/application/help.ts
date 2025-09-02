@@ -4,6 +4,8 @@ import { createHelpDTO } from "../domain/dtos/help";
 import { clerkClient } from "@clerk/express";
 import { sendEmail } from "../utills/mailer";
 
+const adminEmail = "methmald1222@gmail.com";
+
 export const createHelp = async (
   req: Request,
   res: Response,
@@ -42,8 +44,43 @@ export const createHelp = async (
     subject: newHelp.data.subject,
     message: newHelp.data.message,
   });
+  try {
+    await sendEmail({
+      to: adminEmail,
+      subject: `New Help Request: ${newHelp.data.subject}`,
+      html: `
+    <div style="font-family: Arial, sans-serif; padding: 24px; background-color: #f9f9f9; color: #2d2d2d;">
+      <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 24px; border-radius: 10px; border: 1px solid #e5e7eb;">
+        
+        <h2 style="margin-bottom: 16px; color: #1a202c;">Hi Admin,</h2>
+        
+        <p style="font-size: 16px;">A guest has requested help with HotelzaAI.</p>
 
-  res.status(201).json(savedHelp);
+        <div style="margin-top: 20px;">
+          <p style="font-weight: bold; margin-bottom: 6px;">The request:</p>
+          <blockquote style="margin: 0; padding: 12px 16px; background-color: #f3f4f6; border-left: 4px solid #4b5563; border-radius: 4px; font-style: italic;">
+            ${newHelp.data.message}
+          </blockquote>
+        </div>
+
+        <div style="margin-top: 24px;">
+          Consider replying to the guest as soon as possible. The request can be found in your admin dashboard.
+        </div>
+
+        <p style="margin-top: 32px; font-size: 14px; color: #4b5563;">Thank you!</p>
+
+        <p style="margin-top: 24px;">— <strong>HotelzaAI</strong></p>
+
+      </div>
+    </div>
+  `,
+    });
+    res.status(201).json({ message: "Help request created successfully" });
+  } catch (error) {
+    console.log("Error sending email", error);
+    res.status(500).json({ message: "Help request saved, but email failed" });
+    return;
+  }
 };
 
 export const getAllHelp = async (req: Request, res: Response) => {

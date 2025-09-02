@@ -1,11 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import AppRating from "../infrastructure/schemas/AppRating";
 import Hotel from "../infrastructure/schemas/Hotel";
-import NodeCache from "node-cache";
 import Clerk from "@clerk/clerk-sdk-node";
 import { clerkClient } from "@clerk/express";
-
-const cache = new NodeCache({ stdTTL: 60 * 60 * 10 });
+import { cache } from "../utills/Cache";
 
 export const getAppStatistics = async (
   req: Request,
@@ -16,13 +14,14 @@ export const getAppStatistics = async (
     // 1. Check cache first
     const cachedStats = cache.get("appStats");
     if (cachedStats) {
+      console.log("App statistics fetching from the cache");
       res.json(cachedStats);
       return;
     }
+    console.log("App statistics not found in the cache");
 
     // 2. Fetch number of users (optional: replace with stored value for better perf)
-    const userList = await Clerk.users.getUserList({ limit: 10 });
-    const userCount = userList.length; // Clerk provides total count
+    const userCount = (await clerkClient.users.getUserList()).totalCount;
 
     // 3. Fetch number of hotels
     const hotelCount = await Hotel.countDocuments();
@@ -140,14 +139,16 @@ export const getLandingReviews = async (
   try {
     const cachedReviews = cache.get("landingReviews");
     if (cachedReviews) {
+      console.log("Landing reviews fetching from the cache");
       res.json(cachedReviews);
       return;
     }
+    console.log("Landing reviews not found in the cache");
     const landingReviews = await AppRating.find({ rating: { $gte: 3 } })
       .sort({ createdAt: -1 })
       .limit(3);
 
-    cache.set("landingReviews", landingReviews, 60 * 60 * 24);
+    cache.set("landingReviews", landingReviews);
     res.status(200).json(landingReviews);
     return;
   } catch (error) {

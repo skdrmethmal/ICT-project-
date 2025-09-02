@@ -68,7 +68,9 @@ export const createReview = async (
 
     const updatedHotel = await Hotel.findById(hotelId);
     if (updatedHotel) {
-      updatedHotel.rating = updatedHotel.totalRating / updatedHotel.reviews;
+      updatedHotel.rating = Number(
+        (updatedHotel.totalRating / updatedHotel.reviews).toFixed(2)
+      );
       await updatedHotel.save();
     }
     res.status(201).json(savedReview);

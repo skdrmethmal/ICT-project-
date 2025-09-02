@@ -77,7 +77,8 @@ export const ChatBotDialog = () => {
               />
               <div>
                 <h3 className="text-sm font-semibold text-zinc-900">
-                  HotelziAI
+                  <span>Hotelzi</span>
+                  <span className="animate-pulse text-blue-800">AI</span>
                 </h3>
                 <p className="text-xs  text-muted-foreground">
                   Your perfect staycation, simplified.
